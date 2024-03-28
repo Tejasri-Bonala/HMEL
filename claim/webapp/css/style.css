@@ -1,0 +1,385 @@
+.backgroundVBox {
+    position: relative;
+    margin: 0;
+    /* Reset margin to remove space */
+    padding: 0;
+    /* Reset padding to remove space */
+}
+
+.page1 {
+    background-image: url(../images/bg.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+
+}
+
+@media only screen and (max-width: 600px) {
+    .page1 {
+        background-size: 100% 100%;
+        /* Cover the entire screen */
+    }
+}
+
+.hellotable {
+    background-color: antiquewhite;
+}
+
+.backgroundImage {
+    position: absolute;
+    top: 0;
+    /* Adjust top position based on your desired offset */
+    left: 0;
+    height: 37rem;
+}
+
+.sapUiResponsiveMargin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Center the panel horizontally */
+    transform: translateX(-50%) translateY(100%);
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.sapMPanel .sapMTB.sapMPanelHeaderTB {
+    height: 4rem;
+}
+
+.logoImage {
+    margin-right: 5rem;
+}
+
+.Login .sapMBtnInner {
+    background-color: rgb(230, 120, 23);
+
+    height: 30px;
+    width: 100px;
+    border: none;
+
+}
+
+.Login .sapMBtnInner:hover {
+
+    background-color: rgb(101, 147, 39);
+    border: none;
+}
+
+.Login .sapMBtnContent {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.add {
+    margin-left: 1rem;
+}
+
+.add .sapMBtnInner {
+    background-color: rgb(230, 120, 23);
+    height: 25px;
+    width: 80px;
+    border: none;
+
+}
+
+.add .sapMBtnInner:hover {
+
+    background-color: rgb(101, 147, 39);
+    border: none;
+}
+
+.add .sapMBtnContent {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Profile {
+    margin: 10rem;
+    font-weight: bold;
+}
+
+/*sapMText sapUiSelectable sapMTextBreakWord sapMTextMaxWidth Profile sapMBarChild*/
+.sideNavigation {
+    height: 700px;
+}
+
+.sapMInputBaseInner {
+    border: none;
+}
+
+.myCustomTable .sapMListTbl {
+    border-top: 1px solid #000;
+}
+
+.myCustomTable .sapMListHdr {
+    background-color: #333;
+    color: #fff;
+}
+
+.detailPage .sapMBarPH {
+    background-color: #f1e4e4;
+    color: #fff;
+}
+
+.detailPage .sapMBarChild {
+    color: #000;
+    font-size: larger;
+}
+
+.detail2 .sapMBarPH {
+    background-color: #f1e4e4;
+    color: #fff;
+}
+
+.detail2 .sapMBarChild {
+    color: #000;
+    font-size: larger;
+}
+
+.detail1 .sapMBarPH {
+    background-color: #f1e4e4;
+    color: #fff;
+}
+
+.detail1 .sapMBarChild {
+    color: #000;
+    font-size: larger;
+}
+
+.tabbar .sapContrastPlus {
+    background-color: #fef7e2;
+}
+
+.tabbar .sapMITBTextOnly {
+    color: #000
+}
+
+.sapMITHTextContent {
+    color: #000;
+}
+
+/* .sapMITBContentArrow{
+    color: #fff;
+} */
+.Clear .sapMITBTextOnly {
+    color: #000;
+}
+
+.spacingAfter {
+    margin-bottom: 1.0rem;
+}
+
+.label {
+    font-size: medium;
+    font-weight: 700;
+}
+
+.requestlabel {
+    font-size: large;
+    font-weight: 700;
+
+}
+
+.request {
+    font-size: large;
+    font-weight: 600;
+    /* padding-left: 12rem; */
+
+}
+
+.requesttext {
+    font-size: large;
+    font-weight: 600;
+
+}
+
+.reviewlabel {
+    font-size: large;
+    font-weight: 700;
+}
+
+.detaillabel {
+    font-size: medium;
+    font-weight: 500;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.detail {
+    font-size: medium;
+    font-weight: light;
+    padding-top: 0.9rem;
+    padding-left: 10px;
+}
+
+.detailreview {
+    font-size: medium;
+    font-weight: 500;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.detailtext {
+    font-size: medium;
+    font-weight: light;
+    padding-top: 9.5px;
+    padding-left: 10px;
+}
+
+.claimtext {
+    font-size: medium;
+    font-weight: light;
+    padding-top: 12px;
+    padding-left: 10px;
+}
+.claimdetailtext{
+    font-size: medium;
+    font-weight: light;
+    padding-top: 10.5px;
+    padding-left: 10px;
+}
+
+.sapMITBSelected .sapMITBContentArrow::after {
+    background: #000;
+
+}
+
+.watermarkText {
+    position: fixed;
+    right: 10px;
+    /* Adjust the right position as needed */
+    bottom: 30px;
+    /* Adjust the bottom position as needed */
+    font-size: 50px;
+    /* Adjust the font size as needed */
+    opacity: 0.5;
+    /* Adjust the opacity as needed */
+    transform: rotate(-45deg);
+    /* Rotate the text diagonally */
+}
+
+.inputfields {
+    padding-bottom: 1.3rem;
+}
+
+.item {
+    margin: 20px;
+}
+
+/* .buttonsAndTotal {
+    display: flex;
+    flex-direction: column;
+}
+ 
+.buttonsAndTotal .buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+ 
+.buttonsAndTotal .button {
+    flex-grow: 1;
+    margin: 5px;
+}
+ 
+.buttonsAndTotal .totalRequestedAmountLabel {
+    margin-top: 20px;
+}
+ 
+@media only screen and (max-width: 1024px) {
+    .buttonsAndTotal .buttons-container {
+        flex-direction: column;
+    }
+} */
+
+.details-column {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-item-left,
+.flex-item-right {
+    flex: 50%;
+}
+
+/* Responsive layout - makes a one-column layout instead of a two-column layout only on mobile */
+@media (max-width: 800px) and (max-device-width: 600px) {
+
+    .details-column .flex-item-right,
+    .details-column .flex-item-left {
+        flex: 100%;
+    }
+
+    .details-column .flex-item-right .detail,
+    .details-column .flex-item-left .detail {
+        font-size: medium;
+        font-weight: light;
+        padding-top: 1.4rem;
+        /* Adjust the padding top */
+        padding-left: 10px;
+    }
+}
+
+
+@media (max-width: 800px) {
+    .details-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .details-column .detaillabel {
+        flex-basis: 50%;
+        margin-bottom: 3px;
+    }
+
+    .details-column .detailtext {
+        flex-basis: 50%;
+    }
+
+    .details-column .item {
+        flex-direction: column;
+    }
+
+    .details-column .details-column {
+        flex-basis: 100%;
+    }
+}
+
+.Accept .sapMLabelTextWrapper {
+    font-weight: 700;
+}
+
+.sapMIBar {
+    border: none;
+}
+.panelclaim{
+    background-color: #fff;
+
+}
+.claimlabel{
+   font-size: medium;
+   font-weight: 800;
+}
+.inputclaim{
+    margin-left:0px;
+}
+.pageheader .sapMIBar.sapMHeader-CTX {
+    color: #fff;
+    background-color: #f1e4e4;
+    filter: none;
+    background-image: none;
+}
+
+/*sapMIBar sapMIBar-CTX sapMBar sapMContent-CTX sapMBar-CTX sapMPageHeader sapMHeader-CTX sapContrastPlus sapMBarTitleAlignAuto*/
+/* class="sapUiRespGridSpanXL sapUiRespGridSpanL sapUiRespGridSpanM sapUiRespGridSpanS1 */
+
+/* sapMIBar sapMTBInactive sapMTB sapMTBNewFlex sapMTBStandard sapMTB-Auto-CTX sapMOTB */
+
+/* sapMIBar sapMTBInactive sapMTB sapMTBNewFlex sapMTBClear sapMTB-Auto-CTX sapMOTB */
+/* sapMTitle sapMTitleStyleAuto sapMTitleNoWrap sapUiSelectable sapMTitleMaxWidth sapMBarChild */
+/* sapMITH sapContrastPlus sapMITHBackgroundDesignSolid sapMITBTextOnly sapMITBInLine sapMITBTextOnly sapUiResponsiveContentPadding */

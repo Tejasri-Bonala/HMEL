@@ -1,0 +1,126 @@
+<mvc:View
+    controllerName="claim.controller.claimdetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <m:Page
+        class="sapUiContentPadding pageheader detailPage"
+        showHeader="true"
+        
+    >
+     <m:customHeader>
+        <m:Toolbar>
+            <m:Button icon="sap-icon://nav-back" press="onNavBack"/>
+            <m:Title text="{= 'Claim Details:' + ${localModel>/dataValue/0/CLAIM_ID}}" level="H2"/>
+        </m:Toolbar>
+    </m:customHeader>
+        <m:content>
+           
+                <m:OverflowToolbar>
+                    <m:ToolbarSpacer />
+                    <m:Button
+                        text="Edit"
+                        class="add"
+                        id="editButton"
+                        press="onEdit"
+                        visible="{ path: 'localModel>/dataValue/0/STATUS', formatter: '.isEditVisible' }"
+                    />
+                </m:OverflowToolbar>
+
+                <f:Form
+                    id="FormDisplay355"
+                    editable="false"
+                >
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                          labelSpanXL="4"
+                                                labelSpanL="3"
+                                                labelSpanM="4"
+                                                labelSpanS="12"
+                                                adjustLabelSpan="false"
+                                                emptySpanXL="0"
+                                                emptySpanL="4"
+                                                emptySpanM="0"
+                                                emptySpanS="0"
+                                                columnsXL="1"
+                                                columnsL="1"
+                                                columnsM="1"
+                                                singleContainerFullSize="false"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer title="Claim Details">
+                            <f:FormElement>
+                                <f:fields>
+                                    <m:List>
+                                        <m:CustomListItem>
+                                            <m:HBox class="item">
+                                                <m:VBox class="details-column">
+                                                    <m:Label text="Claim ID:" class="detaillabel" />
+                                                    <m:Label text="Person Number:"  class="detaillabel" />
+                                                    <m:Label text="Claim Type:"  class="detaillabel" />
+                                                    <m:Label text="Claim Start Date:"  class="detaillabel" />
+                                                    <m:Label text="Claim End Date:"  class="detaillabel" />
+                                                    <m:Label text="Treatment For:"  class="detaillabel" />
+                                                    <m:Label text="Select Dependent:"  class="detaillabel" />
+                                                    <m:Label text="Submitted Date:"  class="detaillabel" />
+                                                </m:VBox>
+                                                <m:VBox class="details-column">
+                                                    <m:Text text="{localModel>/dataValue/0/CLAIM_ID}" id="claimIdText"   class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/PERSON_NUMBER}"  class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/CLAIM_TYPE}"   class="claimdetailtext" />
+                                                    <m:Text text="{path: 'localModel>/dataValue/0/CLAIM_START_DATE', formatter: '.formatDate'}"  class="claimdetailtext" />
+                                                    <m:Text text="{path: 'localModel>/dataValue/0/CLAIM_END_DATE', formatter: '.formatDate'}"   class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/TREATMENT_FOR}"    class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/SELECT_DEPENDENTS}"   class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/SUBMITTED_DATE}"   class="claimdetailtext" />
+                                                </m:VBox>
+                                            </m:HBox>
+                                        </m:CustomListItem>
+                                    </m:List>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:FormContainer>
+                        <f:FormContainer title="Hospitalization Details">
+                            <f:FormElement>
+                                <f:fields>
+                                    <m:VBox>
+                                        <m:CustomListItem>
+                                            <m:HBox class="item">
+                                                <m:VBox class="details-column">
+                                                    <m:Label text="Consultancy Category:"  class="detaillabel" />
+                                                    <m:Label text="Hospital/Medical Store:"  class="detaillabel" />
+                                                    <m:Label text="Bill Date:"  class="detaillabel" />
+                                                    <m:Label text="Bill No:"  class="detaillabel" />
+                                                    <m:Label text="Bill Amount(Rs):"  class="detaillabel"/>
+                                                    <m:Label text="Requested Amount(Rs):"  class="detaillabel" />
+                                                    <m:Label text="Discount(Rs):"  class="detaillabel" />
+                                                    <m:Label text="Approved Amount(Rs):"  class="detaillabel" />
+                                                    <m:Label text="Status:"  class="detaillabel" />
+                                                </m:VBox>
+                                                <m:VBox class="details-column">
+                                                    <m:Text text="{localModel>/dataValue/0/CONSULTANCY_CATEGORY}"   class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/MEDICAL_STORE}"   class="claimdetailtext"/>
+                                                    <m:Text text="{path: 'localModel>/dataValue/0/BILL_DATE', formatter: '.formatDate'}"   class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/BILL_NO}"  class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/BILL_AMOUNT}"  class="claimdetailtext" />
+                                                    <m:Text text="{localModel>/dataValue/0/REQUESTED_AMOUNT}"   class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/DISCOUNT}"   class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/APPROVED_AMOUNT}"   class="claimdetailtext"/>
+                                                    <m:Text text="{localModel>/dataValue/0/STATUS}" id="statusText"   class="claimdetailtext"/>
+                                                </m:VBox>
+                                            </m:HBox>
+                                        </m:CustomListItem>
+                                         </m:VBox>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+         
+        </m:content>
+    </m:Page>
+</mvc:View>
