@@ -121,6 +121,7 @@
                                                         <VBox
                                                             class="spacingAfter"
                                                         >
+                                                      <Label id="claimIdLabel" text="Claim Id" class="label" visible="false"/>
                                                             <Label
                                                                 text="Claim Type"
                                                                 class="label"
@@ -582,7 +583,6 @@
                                             class="requestlabel"
                                         />
                                         <ToolbarSpacer />
-                                        
 
                                         <Button
                                             id="button"
@@ -639,7 +639,9 @@
                                         <items>
                                             <CustomListItem>
                                                 <HBox>
-                                                    <VBox class="details-column">
+                                                    <VBox
+                                                        class="details-column"
+                                                    >
                                                         <Label
                                                             text="Consultancy Category:"
                                                             class="detaillabel"
@@ -690,7 +692,9 @@
                                                             class="detaillabel"
                                                         />
                                                     </VBox>
-                                                    <VBox class="details-column">
+                                                    <VBox
+                                                        class="details-column"
+                                                    >
                                                         <Text
                                                             text="{claimModel>category}"
                                                             class="detail"
@@ -715,7 +719,7 @@
                                                             text="{claimModel>hospitalLocationOther}"
                                                             class="detail"
                                                         />
-                                                       <Text
+                                                        <Text
                                                             text="{path: 'claimModel>billDate', formatter: '.SubmitDate'}"
                                                             class="detail"
                                                         />
@@ -1020,11 +1024,13 @@
                                                                 <HBox
                                                                     class="item"
                                                                 >
-                                                                    <VBox class="details-column">
+                                                                    <VBox
+                                                                        class="details-column"
+                                                                    >
                                                                         <Label
                                                                             text="Claim ID:"
                                                                             class="detaillabel"
-                                                                            visible="false"
+                                                                            visible="true"
                                                                         />
                                                                         <Label
                                                                             text="Claim Person:"
@@ -1059,12 +1065,10 @@
                                                                             class="detaillabel"
                                                                         />
                                                                     </VBox>
-                                                                    <VBox class="details-column">
-                                                                        <Text
-                                                                            text="{claimModel>/claimId}"
-                                                                            class="claimtext"
-                                                                            visible="false"
-                                                                        />
+                                                                    <VBox
+                                                                        class="details-column"
+                                                                    >
+                                                                        <Text text="{path: 'claimModel>/claimId', formatter: '.formatNumericValue'}" class="claimtext" visible="true"/>
                                                                         <Text
                                                                             text="Teja"
                                                                             class="claimtext"
@@ -1124,7 +1128,9 @@
                                                                 <HBox
                                                                     class="item"
                                                                 >
-                                                                    <VBox class="details-column">
+                                                                    <VBox
+                                                                        class="details-column"
+                                                                    >
                                                                         <Label
                                                                             text="Consultancy Category:"
                                                                             class="detaillabel"
@@ -1143,7 +1149,7 @@
                                                                         />
                                                                         <Label
                                                                             text="Bill No:"
-                                                                           class="detaillabel"
+                                                                            class="detaillabel"
                                                                         />
                                                                         <Label
                                                                             text="Bill Amount(Rs):"
@@ -1155,10 +1161,12 @@
                                                                         />
                                                                         <Label
                                                                             text="Requested Amount(Rs):"
-                                                                             class="detaillabel"
+                                                                            class="detaillabel"
                                                                         />
                                                                     </VBox>
-                                                                    <VBox class="details-column">
+                                                                    <VBox
+                                                                        class="details-column"
+                                                                    >
                                                                         <Text
                                                                             text="{claimModel>category}"
                                                                             class="detailtext"
@@ -1257,7 +1265,10 @@
                 >
                     <headerToolbar>
                         <Toolbar>
-                           <SearchField liveChange="onSearch" width="auto" />
+                            <SearchField
+                                liveChange="onSearch"
+                                width="auto"
+                            />
                         </Toolbar>
                     </headerToolbar>
                     <columns>
@@ -1381,9 +1392,12 @@
                     items="{MainModel>/ClaimReports}"
                     sticky="ColumnHeaders"
                 >
-                   <headerToolbar>
+                    <headerToolbar>
                         <Toolbar>
-                           <SearchField liveChange="onSearchClaim" width="auto" />
+                            <SearchField
+                                liveChange="onSearchClaim"
+                                width="auto"
+                            />
                         </Toolbar>
                     </headerToolbar>
                     <columns>
@@ -1398,7 +1412,6 @@
                             minScreenWidth="Tablet"
                             demandPopin="true"
                             width="8em"
-                           
                         >
                             <Text text="Person Number" />
                         </Column>
@@ -1406,7 +1419,6 @@
                             minScreenWidth="Desktop"
                             demandPopin="true"
                             width="16em"
-                           
                         >
                             <Text text="Claim Type" />
                         </Column>
@@ -1414,7 +1426,6 @@
                             minScreenWidth="Desktop"
                             demandPopin="true"
                             width="8em"
-                            
                         >
                             <Text text="Treatment For" />
                         </Column>
@@ -1432,14 +1443,20 @@
                         >
                             <Text text="Requested Amount" />
                         </Column>
-                        <Column demandPopin="true" width="8em">
+                        <Column
+                            demandPopin="true"
+                            width="8em"
+                        >
                             <Text text="STATUS" />
                         </Column>
 
-                        <Column demandPopin="true" width="6em">
+                        <Column
+                            demandPopin="true"
+                            width="6em"
+                        >
                             <Text text="Approved Amount" />
                         </Column>
-                       <Column
+                        <Column
                             hAlign="Center"
                             demandPopin="true"
                             width="3em"
@@ -1451,7 +1468,6 @@
                                 <Text
                                     text="{path: 'MainModel>CLAIM_ID', formatter: '.formatClaimId'}"
                                 />
-                                <!-- <Text text="{MainModel>PERSON_NUMBER}" /> -->
                                 <Text
                                     text="{path: 'MainModel>PERSON_NUMBER', formatter: '.formatPersonNumber'}"
                                 />
@@ -1459,12 +1475,11 @@
                                 <Text text="{MainModel>TREATMENT_FOR}" />
                                 <Text text="{MainModel>SELECT_DEPENDENTS}" />
                                 <Text text="{MainModel>REQUESTED_AMOUNT}" />
-                                <!-- <Text text="{MainModel>STATUS}" /> -->
                                 <Text
                                     text="{path: 'MainModel>STATUS', formatter: '.formatStatus'}"
                                 />
                                 <Text text="{MainModel>APPROVED_AMOUNT}" />
-                                 <Button
+                                <Button
                                     icon="sap-icon://arrow-right"
                                     press="ondetailarrow"
                                 />
@@ -1472,6 +1487,223 @@
                         </ColumnListItem>
                     </items>
                 </Table>
+            </Page>
+
+            <Page
+                id="detail3"
+                title="Claim Details"
+                backgroundDesign="Solid"
+                showNavButton="{= !${device>/system/desktop}}"
+                navButtonPress=".onPressDetailBack"
+                class="detailPage"
+            >
+               
+                <f:Form
+                    id="FormDisplay355"
+                    editable="false"
+                >
+                    <f:layout>
+                        <f:ResponsiveGridLayout
+                            labelSpanXL="4"
+                            labelSpanL="3"
+                            labelSpanM="4"
+                            labelSpanS="12"
+                            adjustLabelSpan="false"
+                            emptySpanXL="0"
+                            emptySpanL="4"
+                            emptySpanM="0"
+                            emptySpanS="0"
+                            columnsXL="1"
+                            columnsL="1"
+                            columnsM="1"
+                            singleContainerFullSize="false"
+                        />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer title="Claim Details">
+                            <f:FormElement>
+                                <f:fields>
+                                    <List>
+                                        <CustomListItem>
+                                            <HBox class="item">
+                                                <VBox class="details-column">
+                                                    <Label
+                                                        text="Claim ID:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Person Number:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Claim Type:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Claim Start Date:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Claim End Date:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Treatment For:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Select Dependent:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Submitted Date:"
+                                                        class="detaillabel"
+                                                    />
+                                                </VBox>
+                                                <VBox class="details-column">
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/CLAIM_ID}"
+                                                        id="claimIdText"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/PERSON_NUMBER}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/CLAIM_TYPE}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{path: 'localModel>/dataValue/0/CLAIM_START_DATE', formatter: '.formatDate'}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{path: 'localModel>/dataValue/0/CLAIM_END_DATE', formatter: '.formatDate'}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/TREATMENT_FOR}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/SELECT_DEPENDENTS}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/SUBMITTED_DATE}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                </VBox>
+                                            </HBox>
+                                        </CustomListItem>
+                                    </List>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:FormContainer>
+                        <f:FormContainer title="Hospitalization Details">
+                            <f:FormElement>
+                                <f:fields>
+                                    <VBox>
+                                        <CustomListItem>
+                                            <HBox class="item">
+                                                <VBox class="details-column">
+                                                    <Label
+                                                        text="Consultancy Category:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Hospital/Medical Store:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Bill Date:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Bill No:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Bill Amount(Rs):"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Requested Amount(Rs):"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Discount(Rs):"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Approved Amount(Rs):"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Status:"
+                                                        class="detaillabel"
+                                                    />
+                                                </VBox>
+                                                <VBox class="details-column">
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/CONSULTANCY_CATEGORY}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/MEDICAL_STORE}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{path: 'localModel>/dataValue/0/BILL_DATE', formatter: '.formatDate'}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/BILL_NO}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/BILL_AMOUNT}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/REQUESTED_AMOUNT}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/DISCOUNT}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/APPROVED_AMOUNT}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>/dataValue/0/STATUS}"
+                                                        id="statusText"
+                                                        class="claimdetailtext"
+                                                    />
+                                                </VBox>
+                                            </HBox>
+                                        </CustomListItem>
+                                    </VBox>
+                                </f:fields>
+                            </f:FormElement>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+                <footer>
+                 <OverflowToolbar>
+                    <ToolbarSpacer />
+                    <Button
+                        text="Edit"
+                        class="Login"
+                        id="editButton"
+                        press="onEdit"
+                        visible="{ path: 'localModel>/dataValue/0/STATUS', formatter: '.isEditVisible' }"
+                    />
+                </OverflowToolbar>
+                </footer>
             </Page>
         </detailPages>
     </SplitContainer>
