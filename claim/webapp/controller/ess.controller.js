@@ -201,10 +201,21 @@ sap.ui.define([
                 // Remove commas from the CLAIM_ID
                 return sClaimId.replace(/,/g, '');
             },
+            // formatPersonNumber: function (sPersonNumber) {
+            //     // Remove commas from the PERSON_NUMBER
+            //     return sPersonNumber.replace(/,/g, '');
+            // },
             formatPersonNumber: function (sPersonNumber) {
-                // Remove commas from the PERSON_NUMBER
-                return sPersonNumber.replace(/,/g, '');
+                // Check if sPersonNumber is null or undefined
+                if (sPersonNumber != null && sPersonNumber !== undefined) {
+                    // Remove commas from the PERSON_NUMBER
+                    return sPersonNumber.replace(/,/g, '');
+                } else {
+                    // Return empty string or handle the case accordingly
+                    return '';
+                }
             },
+            
             onListItemPress: function (oEvent) {
                 var listItem = oEvent.getParameter("listItem");
 
@@ -1146,92 +1157,203 @@ sap.ui.define([
                     sap.m.MessageBox.information(" Please enter Treatment For (If Other)");
                 }
             },
+            // handleSubmit: function () {
+            //     var that = this;
+            //     var AD = this.getView().getModel("claimModel").getData();
+            //     let allDetails = AD.allDetails;
+
+            //     var currentDate = new Date().toISOString().split('T')[0];
+
+            //     // Fetch maximum CLAIM_ID from CLAIM_DETAILS
+            //     fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             var maxClaimId = data.value.length > 0 ? data.value[0].CLAIM_ID : 0;
+
+            //             // Iterate over each detail item and send the claim individually
+            //             allDetails.forEach(function (detail) {
+            //                 // Construct claim object for each detail
+            //                 var claimid = maxClaimId + 1;
+            //                 var person = 90000;
+            //                 var claimType = that.byId("claimt").getText();
+            //                 var claimStartDate = new Date(that.byId("claimsd").getText()).toISOString();
+            //                 var claimEndDate = new Date(that.byId("claimed").getText()).toISOString();
+            //                 var treatmentFor = that.byId("claimtf").getText();
+            //                 var treatmentForOther = that.byId("claimtfo").getText();
+            //                 var selectedDependent = that.byId("claimsde").getText();
+            //                 // var requestamount = parseFloat(that.byId("requestamount").getText());
+            //                 var requestamount = parseFloat(detail.requestedAmount);
+            //                 var consultancyCategory = detail.category;
+            //                 var hospitalStore = detail.hospitalStore;
+            //                 var billDate = new Date(detail.billDate).toISOString();
+            //                 var billNo = detail.billNo;
+            //                 var billAmount = parseFloat(detail.billAmount);
+            //                 var discount = parseFloat(detail.discount);
+
+
+            //                 // Create a new claim object for each detail
+            //                 var newClaim = {
+            //                     CLAIM_ID: claimid,
+            //                     PERSON_NUMBER: person,
+            //                     CLAIM_TYPE: claimType,
+            //                     CLAIM_START_DATE: claimStartDate,
+            //                     CLAIM_END_DATE: claimEndDate,
+            //                     TREATMENT_FOR: treatmentFor,
+            //                     TREATMENT_FOR_IF_OTHERS: treatmentForOther,
+            //                     SELECT_DEPENDENTS: selectedDependent,
+            //                     SUBMITTED_DATE: currentDate,
+            //                     REQUESTED_AMOUNT: requestamount,
+            //                     CONSULTANCY_CATEGORY: consultancyCategory,
+            //                     MEDICAL_STORE: hospitalStore,
+            //                     BILL_DATE: billDate,
+            //                     BILL_NO: billNo,
+            //                     BILL_AMOUNT: billAmount,
+            //                     DISCOUNT: discount
+
+
+            //                 };
+
+            //                 // Send the claim data to the server using Fetch API
+            //                 fetch("./odata/v4/my/CLAIM_DETAILS", {
+            //                     method: "POST",
+            //                     headers: {
+            //                         "Content-Type": "application/json",
+            //                     },
+            //                     body: JSON.stringify(newClaim), // Send the individual claim
+            //                 })
+            //                     .then(result => {
+            //                         sap.m.MessageBox.success(
+            //                             "Claim data saved successfully!",
+            //                             {
+            //                                 onClose: function () {
+            //                                     // Navigate to "Login" after the success message is closed
+            //                                     var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+            //                                     oRouter.navTo("Login");
+            //                                     window.location.reload();
+            //                                 },
+            //                             }
+            //                         );
+            //                     })
+            //                     .catch(error => {
+            //                         sap.m.MessageBox.error("Error while saving claim data");
+            //                     });
+            //             });
+            //         })
+            //         .catch(error => {
+            //             sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID");
+            //         });
+            // },
             handleSubmit: function () {
                 var that = this;
-                var AD = this.getView().getModel("claimModel").getData();
+                var claimModel = this.getView().getModel("claimModel");
+                var AD = claimModel.getData();
                 let allDetails = AD.allDetails;
-
+            
                 var currentDate = new Date().toISOString().split('T')[0];
-
-
-                // Fetch maximum CLAIM_ID from CLAIM_DETAILS
-                fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
-                    .then(response => response.json())
-                    .then(data => {
-                        var maxClaimId = data.value.length > 0 ? data.value[0].CLAIM_ID : 0;
-
-                        // Iterate over each detail item and send the claim individually
-                        allDetails.forEach(function (detail) {
-                            // Construct claim object for each detail
-                            var claimid = maxClaimId + 1;
-                            var person = 90000;
-                            var claimType = that.byId("claimt").getText();
-                            var claimStartDate = new Date(that.byId("claimsd").getText()).toISOString();
-                            var claimEndDate = new Date(that.byId("claimed").getText()).toISOString();
-                            var treatmentFor = that.byId("claimtf").getText();
-                            var treatmentForOther = that.byId("claimtfo").getText();
-                            var selectedDependent = that.byId("claimsde").getText();
-                            // var requestamount = parseFloat(that.byId("requestamount").getText());
-                            var requestamount = parseFloat(detail.requestedAmount);
-                            var consultancyCategory = detail.category;
-                            var hospitalStore = detail.hospitalStore;
-                            var billDate = new Date(detail.billDate).toISOString();
-                            var billNo = detail.billNo;
-                            var billAmount = parseFloat(detail.billAmount);
-                            var discount = parseFloat(detail.discount);
-
-
-                            // Create a new claim object for each detail
-                            var newClaim = {
-                                CLAIM_ID: claimid,
-                                PERSON_NUMBER: person,
-                                CLAIM_TYPE: claimType,
-                                CLAIM_START_DATE: claimStartDate,
-                                CLAIM_END_DATE: claimEndDate,
-                                TREATMENT_FOR: treatmentFor,
-                                TREATMENT_FOR_IF_OTHERS: treatmentForOther,
-                                SELECT_DEPENDENTS: selectedDependent,
-                                SUBMITTED_DATE: currentDate,
-                                REQUESTED_AMOUNT: requestamount,
-                                CONSULTANCY_CATEGORY: consultancyCategory,
-                                MEDICAL_STORE: hospitalStore,
-                                BILL_DATE: billDate,
-                                BILL_NO: billNo,
-                                BILL_AMOUNT: billAmount,
-                                DISCOUNT: discount
-
-
-                            };
-
-                            // Send the claim data to the server using Fetch API
-                            fetch("./odata/v4/my/CLAIM_DETAILS", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify(newClaim), // Send the individual claim
+            
+                // Iterate over each detail item and send the claim individually
+                allDetails.forEach(function (detail) {
+                    const claimIdNode = that.byId("claimid");
+                    // Check if the detail has a claim ID
+                    if (claimIdNode !== undefined && claimIdNode.getText()) {
+                        const CLAIM_ID = claimIdNode.getText();
+                        // If claim ID exists, update the record
+                        var updateClaim = {
+                            CLAIM_ID: CLAIM_ID,
+                            PERSON_NUMBER: 90000,
+                            CLAIM_TYPE: that.byId("claimt").getText(),
+                            CLAIM_START_DATE: new Date(that.byId("claimsd").getText()).toISOString(),
+                            CLAIM_END_DATE: new Date(that.byId("claimed").getText()).toISOString(),
+                            TREATMENT_FOR: that.byId("claimtf").getText(),
+                            TREATMENT_FOR_IF_OTHERS: that.byId("claimtfo").getText(),
+                            SELECT_DEPENDENTS: that.byId("claimsde").getText(),
+                            REQUESTED_AMOUNT: parseFloat(detail.requestedAmount),
+                            CONSULTANCY_CATEGORY: detail.category,
+                            MEDICAL_STORE: detail.hospitalStore,
+                            BILL_DATE: new Date(detail.billDate).toISOString(),
+                            BILL_NO: detail.billNo,
+                            BILL_AMOUNT: parseFloat(detail.billAmount),
+                            DISCOUNT: parseFloat(detail.discount)
+                        };
+            
+                        // Send the updated claim data to the server using Fetch API
+                        fetch("./odata/v4/my/CLAIM_DETAILS?$filter=CLAIM_ID eq " + CLAIM_ID, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(updateClaim),
+                        })
+                        
+                            .then(result => {
+                                sap.m.MessageBox.success(
+                                    "Claim data updated successfully!", {
+                                        onClose: function () {
+                                            var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                            oRouter.navTo("Login");
+                                            window.location.reload();
+                                        },
+                                    }
+                                );
                             })
-                                .then(result => {
-                                    sap.m.MessageBox.success(
-                                        "Claim data saved successfully!",
-                                        {
-                                            onClose: function () {
-                                                // Navigate to "Login" after the success message is closed
-                                                var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-                                                oRouter.navTo("Login");
-                                                window.location.reload();
-                                            },
-                                        }
-                                    );
-                                })
-                                .catch(error => {
-                                    sap.m.MessageBox.error("Error while saving claim data");
-                                });
-                        });
-                    })
-                    .catch(error => {
-                        sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID");
-                    });
+                            .catch(error => {
+                                sap.m.MessageBox.error("Error while updating claim data");
+                            });
+                    } else {
+                        // If claim ID doesn't exist, fetch the maximum CLAIM_ID and then create a new record
+                        fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
+                            .then(response => response.json())
+                            .then(data => {
+                                var maxClaimId = data.value.length > 0 ? data.value[0].CLAIM_ID : 0;
+            
+                                // Create a new record with a unique CLAIM_ID
+                                var newClaim = {
+                                    CLAIM_ID: maxClaimId + 1,
+                                    PERSON_NUMBER: 90000,
+                                    CLAIM_TYPE: that.byId("claimt").getText(),
+                                    CLAIM_START_DATE: new Date(that.byId("claimsd").getText()).toISOString(),
+                                    CLAIM_END_DATE: new Date(that.byId("claimed").getText()).toISOString(),
+                                    TREATMENT_FOR: that.byId("claimtf").getText(),
+                                    TREATMENT_FOR_IF_OTHERS: that.byId("claimtfo").getText(),
+                                    SELECT_DEPENDENTS: that.byId("claimsde").getText(),
+                                    SUBMITTED_DATE: currentDate,
+                                    REQUESTED_AMOUNT: parseFloat(detail.requestedAmount),
+                                    CONSULTANCY_CATEGORY: detail.category,
+                                    MEDICAL_STORE: detail.hospitalStore,
+                                    BILL_DATE: new Date(detail.billDate).toISOString(),
+                                    BILL_NO: detail.billNo,
+                                    BILL_AMOUNT: parseFloat(detail.billAmount),
+                                    DISCOUNT: parseFloat(detail.discount)
+                                };
+            
+                                // Send the new claim data to the server using Fetch API
+                                fetch("./odata/v4/my/CLAIM_DETAILS", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify(newClaim),
+                                    })
+                                    .then(result => {
+                                        sap.m.MessageBox.success(
+                                            "Claim data saved successfully!", {
+                                                onClose: function () {
+                                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                                    oRouter.navTo("Login");
+                                                    window.location.reload();
+                                                },
+                                            }
+                                        );
+                                    })
+                                    .catch(error => {
+                                        sap.m.MessageBox.error("Error while saving claim data");
+                                    });
+                            })
+                            .catch(error => {
+                                sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID");
+                            });
+                    }
+                });
             },
             
             onCustomerPress: function (oEvent) {
@@ -1303,6 +1425,7 @@ sap.ui.define([
                         sap.m.MessageBox.error("Error retrieving data for Claim ID: " + sClaimId);
                     });
             },
+
 
             onCloseFrag: function () {
                 var oView = this.getView();
@@ -1476,6 +1599,7 @@ sap.ui.define([
                     sap.m.MessageBox.error("Invalid Claim ID");
                 }
             },
+
 
             onStatusChange: function (oEvent) {
                 var sDocumentStatus = oEvent.getSource().getSelectedItem().getText();
@@ -1761,8 +1885,9 @@ sap.ui.define([
                 // oClaimIdLabel.setText(oFormData.CLAIM_ID);
                 var claimId = oFormData.CLAIM_ID;
 
-                oClaimIdLabel.setText("Claim Id: " + claimId);
-             
+                // oClaimIdLabel.setText("Claim Id: " + claimId);
+
+                oClaimIdLabel.setText(claimId);
 
                 // Make the Claim ID label visible
                 oClaimIdLabel.setVisible(true);
@@ -1797,7 +1922,7 @@ sap.ui.define([
                 // oPrescriptionCheckBox.setSelected(oFormData.PRESCRIPTION);
                 // oOriginalBillCheckBox.setSelected(oFormData.ORIGINAL_BILL);
 
-               
+
                 // Get the form elements for hospitalization details by their IDs
                 var oConsultancyCategoryComboBox = this.byId("consultancycategorys");
                 var oDoctorNameInput = this.byId("DN");
@@ -1827,21 +1952,21 @@ sap.ui.define([
                 oDescriptionInput.setValue(oFormData.DESCRIPTION);
 
                 // Show the editable form
-                 
- 
+
+
                 var oIconTabBar = this.byId("myIconTabBar");
                 oIconTabBar.setSelectedKey("Create");
 
                 var oIconTabBar = this.byId("myIconTabBar");
-                 oIconTabBar.setSelectedKey("claimDetails");
+                oIconTabBar.setSelectedKey("claimDetails");
             },
-            formatNumericValue: function(sValue) {
+            formatNumericValue: function (sValue) {
                 // Ensure sValue is a string
                 var sNumericValue = String(sValue);
-            
+
                 // Remove any non-numeric characters using regular expression
                 var sNumericOnlyValue = sNumericValue.replace(/\D/g, '');
-            
+
                 // Return the numeric-only value
                 return sNumericOnlyValue;
             }

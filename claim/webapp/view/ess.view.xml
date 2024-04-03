@@ -1068,7 +1068,7 @@
                                                                     <VBox
                                                                         class="details-column"
                                                                     >
-                                                                        <Text text="{path: 'claimModel>/claimId', formatter: '.formatNumericValue'}" class="claimtext" visible="true"/>
+                                                                        <Text text="{path: 'claimModel>/claimId', formatter: '.formatNumericValue'}" id="claimid" class="claimtext" visible="true"/>
                                                                         <Text
                                                                             text="Teja"
                                                                             class="claimtext"
