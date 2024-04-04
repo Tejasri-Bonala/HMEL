@@ -37,8 +37,8 @@ sap.ui.define([
                 // Set initial visibility of buttons
                 this.updateButtonVisibility();
 
-                var oClaimModel = new JSONModel();
-                this.getView().setModel(oClaimModel, "claimModel");
+                // var olocalModel = new JSONModel();
+                // this.getView().setModel(olocalModel, "localModel");
                 this.sLastSelectedTab = "claimDetails"
 
                 this.updateTotalRequestedAmount();
@@ -75,8 +75,8 @@ sap.ui.define([
                 if (this.sLastSelectedTab === "claimDetails") {
                     // Validate fields in "Claim Details" tab
 
-                    // Save data from the current tab to the claimModel
-                    this.saveDataToClaimModel();
+                    // Save data from the current tab to the localModel
+                    this.saveDataTolocalModel();
                     var aMissingFields = this.validateRequiredFields("claimDetails");
                     if (aMissingFields.length > 0) {
                         // Show an error message with missing required fields
@@ -257,8 +257,8 @@ sap.ui.define([
                     return oItem.getKey() === sSelectedKey;
                 });
 
-                // Save data from the current tab to the claimModel
-                this.saveDataToClaimModel();
+                // Save data from the current tab to the localModel
+                this.saveDataTolocalModel();
 
                 // Check if all required fields are filled in the current tab
                 var aMissingFields = this.validateRequiredFields(sSelectedKey);
@@ -387,158 +387,35 @@ sap.ui.define([
                 }
             },
 
-            saveDataToClaimModel: function () {
-                var oClaimModel = this.getView().getModel("claimModel");
+            saveDataTolocalModel: function () {
+                var olocalModel = this.getView().getModel("localModel");
 
                 // Set properties for Claim Type
-                oClaimModel.setProperty("/claimType", this.byId("CT").getSelectedKey());
+                olocalModel.setProperty("/claimType", this.byId("CT").getSelectedKey());
 
                 // Set properties for Claim Start and End Dates
-                oClaimModel.setProperty("/claimStartDate", this.byId("startDatePicker1").getValue());
-                oClaimModel.setProperty("/claimEndDate", this.byId("endDatePicker1").getValue());
+                olocalModel.setProperty("/claimStartDate", this.byId("startDatePicker1").getValue());
+                olocalModel.setProperty("/claimEndDate", this.byId("endDatePicker1").getValue());
 
                 // Set properties for Treatment For
-                oClaimModel.setProperty("/treatmentFor", this.byId("TF").getSelectedKey());
+                olocalModel.setProperty("/treatmentFor", this.byId("TF").getSelectedKey());
 
                 // Set properties for Treatment For (If Other)
-                oClaimModel.setProperty("/treatmentForOther", this.byId("TreatmentForOther").getValue());
+                olocalModel.setProperty("/treatmentForOther", this.byId("TreatmentForOther").getValue());
+                olocalModel.setProperty("/treatmentType", this.byId("TT").getValue());
 
                 // Set properties for Select Dependents
-                oClaimModel.setProperty("/selectedDependent", this.byId("SD").getSelectedKey());
+                olocalModel.setProperty("/selectedDependent", this.byId("SD").getSelectedKey());
 
-                oClaimModel.setProperty("/claimId", this.byId("claimIdLabel").getText());
+                olocalModel.setProperty("/claimId", this.byId("claimIdLabel").getText());
 
                 // var claimIdInput = this.byId("claimIdInput");
                 // var claimId = claimIdInput.getValue().replace(/\D/g, ''); 
-                // oClaimModel.setProperty("/claimId", claimId);
+                // olocalModel.setProperty("/claimId", claimId);
 
 
             },
 
-
-
-
-            // addPress: function () {
-            //     // Get all the form values
-            //     var startDate = this.byId("startDatePicker1").getDateValue();
-            //     var startdatewithstring = startDate.toISOString();
-            //     var startdate = startdatewithstring.split('T')[0];
-            //     var endDate = this.byId("endDatePicker1").getDateValue();
-            //     var endsatewithstring = endDate.toISOString();
-            //     var enddate = endsatewithstring.split('T')[0];
-
-            //     var category = this.byId("consultancycategorys").getSelectedKey();
-            //     var doctor = this.byId("DN").getValue();
-            //     var patientId = this.byId("ID").getValue();
-            //     var hospitalStore = this.byId("HospitalStore").getSelectedKey();
-            //     var hospitalLocation = this.byId("Hospitallocation").getSelectedKey();
-            //     var hospitalLocationOther = this.byId("HL").getValue();
-            //     var billDate = this.byId("billdate").getDateValue();
-            //     var billNo = this.byId("billno").getValue();
-            //     var billAmount = this.byId("billamount").getValue();
-            //     var discount = this.byId("discount").getValue();
-            //     var requestedAmount = this.byId("requestamount").getValue();
-            //     var review = this.byId("description").getValue();
-
-            //     // Initialize an array to store the names of missing fields
-            //     var missingFields = [];
-
-            //     // Perform validation checks for missing fields
-            //     if (!doctor) missingFields.push("Doctor's Name");
-            //     if (!patientId) missingFields.push("Patient ID");
-            //     if (!hospitalStore) missingFields.push("Hospital/Medical Store");
-            //     if (!hospitalLocation) missingFields.push("Hospital Location");
-            //     if (!billDate) missingFields.push("Bill Date");
-            //     if (!billNo) missingFields.push("Bill No");
-            //     if (!billAmount) missingFields.push("Bill Amount(Rs)");
-            //     if (!requestedAmount) missingFields.push("Requested Amount");
-
-            //     // Check if any fields are missing
-            //     if (missingFields.length > 0) {
-            //         // Display an error message with the list of missing fields
-            //         var errorMessage = "Please fill in the following required fields:\n" + missingFields.join("\n");
-            //         MessageBox.error(errorMessage);
-            //         return;
-            //     }
-
-            //     fetch("./odata/v4/my/validations(endDate=" + enddate + ",startDate=" + startdate + ",requestedAmount=" + requestedAmount + `,category='` + category + `')`, {
-            //         method: "GET"
-            //     })
-            //         .then(response => {
-            //             if (!response.ok) {
-            //                 throw new Error('Network response was not ok');
-            //             }
-            //             return response.json();
-            //         })
-            //         .then(data => {
-            //             if (data.value.success) {
-            //                 if (requestedAmount > data.value.finalAmount) {
-            //                     var eligibleAmountMessage = "Your eligible amount is: " + data.value.finalAmount;
-            //                     MessageBox.information(eligibleAmountMessage, {
-            //                         onClose: function (oAction) {
-            //                             if (oAction === MessageBox.Action.OK) {
-            //                                 var details = {
-            //                                     category: category,
-            //                                     doctor: doctor,
-            //                                     patientId: patientId,
-            //                                     hospitalStore: hospitalStore,
-            //                                     hospitalLocation: hospitalLocation,
-            //                                     hospitalLocationOther: hospitalLocationOther,
-            //                                     billDate: billDate,
-            //                                     billNo: billNo,
-            //                                     billAmount: billAmount,
-            //                                     discount: discount,
-            //                                     requestedAmount: data.value.finalAmount,
-            //                                     review: review,
-            //                                 };
-            //                                 var detailsModel = this.getView().getModel("claimModel");
-            //                                 if (!detailsModel) {
-            //                                     detailsModel = new sap.ui.model.json.JSONModel();
-            //                                     this.getView().setModel(detailsModel, "claimModel");
-            //                                 }
-            //                                 var allDetails = detailsModel.getProperty("/allDetails") || [];
-            //                                 allDetails.push(details);
-            //                                 detailsModel.setProperty("/allDetails", allDetails);
-            //                                 this.clearForm();
-            //                                 this.updateTotalRequestedAmount();
-            //                             }
-            //                         }.bind(this)
-            //                     });
-            //                 } else {
-            //                     var details = {
-            //                         category: category,
-            //                         doctor: doctor,
-            //                         patientId: patientId,
-            //                         hospitalStore: hospitalStore,
-            //                         hospitalLocation: hospitalLocation,
-            //                         hospitalLocationOther: hospitalLocationOther,
-            //                         billDate: billDate,
-            //                         billNo: billNo,
-            //                         billAmount: billAmount,
-            //                         discount: discount,
-            //                         requestedAmount: requestedAmount,
-            //                         review: review,
-            //                     };
-            //                     var detailsModel = this.getView().getModel("claimModel");
-            //                     if (!detailsModel) {
-            //                         detailsModel = new sap.ui.model.json.JSONModel();
-            //                         this.getView().setModel(detailsModel, "claimModel");
-            //                     }
-            //                     var allDetails = detailsModel.getProperty("/allDetails") || [];
-            //                     allDetails.push(details);
-            //                     detailsModel.setProperty("/allDetails", allDetails);
-            //                     this.clearForm();
-            //                     this.updateTotalRequestedAmount();
-            //                 }
-            //             } else {
-            //                 MessageBox.information(data.value.message);
-            //             }
-            //         })
-            //         .catch(error => {
-            //             MessageBox.error("Error occurred while fetching data");
-            //             console.error('Error:', error);
-            //         });
-            // },
             addPress: function () {
                 // Get all the form values
                 var category = this.byId("consultancycategorys").getSelectedKey();
@@ -614,18 +491,18 @@ sap.ui.define([
                                         if (oAction === MessageBox.Action.OK) {
                                             // Add details to model
                                             var details = {
-                                                category: category,
-                                                doctor: doctor,
-                                                patientId: patientId,
-                                                hospitalStore: hospitalStore,
-                                                hospitalLocation: hospitalLocation,
-                                                hospitalLocationOther: hospitalLocationOther,
-                                                billDate: billdate,
-                                                billNo: billNo,
-                                                billAmount: billAmount,
-                                                discount: discount,
-                                                requestedAmount: data.value.finalAmount,
-                                                review: review,
+                                                CONSULTANCY_CATEGORY: category,
+                                                DOCTOR_NAME: doctor,
+                                                PATIENT_ID: patientId,
+                                                MEDICAL_STORE: hospitalStore,
+                                                HOSPITAL_LOCATION: hospitalLocation,
+                                                // hospitalLocationOther: hospitalLocationOther,
+                                                BILL_DATE: billdate,
+                                                BILL_NO: billNo,
+                                                BILL_AMOUNT: billAmount,
+                                                DISCOUNT: discount,
+                                                REQUESTED_AMOUNT: data.value.finalAmount,
+                                                REVIEW: review,
                                             };
                                             this.addDetailsToModel(details);
                                         }
@@ -634,18 +511,18 @@ sap.ui.define([
                             } else {
                                 // Add details to model
                                 var details = {
-                                    category: category,
-                                    doctor: doctor,
-                                    patientId: patientId,
-                                    hospitalStore: hospitalStore,
-                                    hospitalLocation: hospitalLocation,
-                                    hospitalLocationOther: hospitalLocationOther,
-                                    billDate: billDate,
-                                    billNo: billNo,
-                                    billAmount: billAmount,
-                                    discount: discount,
-                                    requestedAmount: requestedAmount,
-                                    review: review,
+                                    CONSULTANCY_CATEGORY: category,
+                                    DOCTOR_NAME: doctor,
+                                    PATIENT_ID: patientId,
+                                    MEDICAL_STORE: hospitalStore,
+                                    HOSPITAL_LOCATION: hospitalLocation,
+                                    // hospitalLocationOther: hospitalLocationOther,
+                                    BILL_DATE: billdate,
+                                    BILL_NO: billNo,
+                                    BILL_AMOUNT: billAmount,
+                                    DISCOUNT: discount,
+                                    REQUESTED_AMOUNT: data.value.finalAmount,
+                                    REVIEW: review,
                                 };
                                 this.addDetailsToModel(details);
                             }
@@ -653,18 +530,18 @@ sap.ui.define([
                             // Category not found, directly add details
                             // Add details to model
                             var details = {
-                                category: category,
-                                doctor: doctor,
-                                patientId: patientId,
-                                hospitalStore: hospitalStore,
-                                hospitalLocation: hospitalLocation,
-                                hospitalLocationOther: hospitalLocationOther,
-                                billDate: billDate,
-                                billNo: billNo,
-                                billAmount: billAmount,
-                                discount: discount,
-                                requestedAmount: requestedAmount,
-                                review: review,
+                                CONSULTANCY_CATEGORY: category,
+                                                DOCTOR_NAME: doctor,
+                                                PATIENT_ID: patientId,
+                                                MEDICAL_STORE: hospitalStore,
+                                                HOSPITAL_LOCATION: hospitalLocation,
+                                                // hospitalLocationOther: hospitalLocationOther,
+                                                BILL_DATE: billdate,
+                                                BILL_NO: billNo,
+                                                BILL_AMOUNT: billAmount,
+                                                DISCOUNT: discount,
+                                                REQUESTED_AMOUNT: data.value.finalAmount,
+                                                REVIEW: review,
                             };
                             this.addDetailsToModel(details);
                         }
@@ -678,14 +555,14 @@ sap.ui.define([
 
 
             addDetailsToModel: function (details) {
-                var detailsModel = this.getView().getModel("claimModel");
+                var detailsModel = this.getView().getModel("localModel");
                 if (!detailsModel) {
                     detailsModel = new sap.ui.model.json.JSONModel();
-                    this.getView().setModel(detailsModel, "claimModel");
+                    this.getView().setModel(detailsModel, "localModel");
                 }
-                var allDetails = detailsModel.getProperty("/allDetails") || [];
-                allDetails.push(details);
-                detailsModel.setProperty("/allDetails", allDetails);
+                var dataValue = detailsModel.getProperty("/dataValue") || [];
+                dataValue.push(details);
+                detailsModel.setProperty("/dataValue", dataValue);
                 this.clearForm();
                 this.updateTotalRequestedAmount();
             },
@@ -731,18 +608,18 @@ sap.ui.define([
             },
 
             deleteSelectedItems: function (selectedItems) {
-                var detailsModel = this.getView().getModel("claimModel");
-                var allDetails = detailsModel.getProperty("/allDetails");
+                var detailsModel = this.getView().getModel("localModel");
+                var dataValue = detailsModel.getProperty("/dataValue");
 
                 // Remove the selected items from the array
                 selectedItems.forEach(function (item) {
-                    var context = item.getBindingContext("claimModel");
+                    var context = item.getBindingContext("localModel");
                     var index = context.getPath().split("/").pop();
-                    allDetails.splice(index, 1);
+                    dataValue.splice(index, 1);
                 });
 
                 // Update the model with the modified array
-                detailsModel.setProperty("/allDetails", allDetails);
+                detailsModel.setProperty("/dataValue", dataValue);
 
                 // Clear the selection in the list
                 this.byId("detailsList").removeSelections();
@@ -763,7 +640,7 @@ sap.ui.define([
                 }
 
                 // Get the context of the selected item
-                var selectedContext = selectedItems[0].getBindingContext("claimModel");
+                var selectedContext = selectedItems[0].getBindingContext("localModel");
 
                 // Get the data of the selected item from the model
                 var selectedData = selectedContext.getProperty();
@@ -782,23 +659,23 @@ sap.ui.define([
 
 
             setFormValues: function (details) {
-                var date = new Date(details.billDate);
+                var date = new Date(details.BILL_DATE);
                 var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
                     pattern: "MMM d, yyyy"
                 });
                 var formattedDate = oDateFormat.format(date);
-                this.byId("consultancycategorys").setSelectedKey(details.category);
-                this.byId("DN").setValue(details.doctor);
-                this.byId("ID").setValue(details.patientId);
-                this.byId("HospitalStore").setSelectedKey(details.hospitalStore);
-                this.byId("Hospitallocation").setSelectedKey(details.hospitalLocation);
-                this.byId("HL").setValue(details.hospitalLocationOther);
+                this.byId("consultancycategorys").setSelectedKey(details.CONSULTANCY_CATEGORY);
+                this.byId("DN").setValue(details.DOCTOR_NAME);
+                this.byId("ID").setValue(details.PATIENT_ID);
+                this.byId("HospitalStore").setSelectedKey(details.MEDICAL_STORE);
+                this.byId("Hospitallocation").setSelectedKey(details.HOSPITAL_LOCATION);
+                // this.byId("HL").setValue(details.hospitalLocationOther);
                 this.byId("billdate").setValue(formattedDate);
-                this.byId("billno").setValue(details.billNo);
-                this.byId("billamount").setValue(details.billAmount);
-                this.byId("discount").setValue(details.discount);
-                this.byId("requestamount").setValue(details.requestedAmount);
-                this.byId("description").setValue(details.review);
+                this.byId("billno").setValue(details.BILL_NO);
+                this.byId("billamount").setValue(details.BILL_AMOUNT);
+                this.byId("discount").setValue(details.DISCOUNT);
+                this.byId("requestamount").setValue(details.REQUESTED_AMOUNT);
+                this.byId("description").setValue(details.REVIEW);
             },
             EditPress: function () {
                 var list = this.byId("detailsList");
@@ -810,7 +687,7 @@ sap.ui.define([
                 }
 
                 // Get the context of the selected item
-                var selectedContext = selectedItems[0].getBindingContext("claimModel");
+                var selectedContext = selectedItems[0].getBindingContext("localModel");
 
                 // Get the data of the selected item from the model
                 var selectedData = selectedContext.getProperty();
@@ -833,7 +710,7 @@ sap.ui.define([
                     return;
                 }
 
-                var selectedContext = selectedItems[0].getBindingContext("claimModel");
+                var selectedContext = selectedItems[0].getBindingContext("localModel");
 
                 if (!selectedContext) {
                     MessageBox.error("No data to update.");
@@ -903,11 +780,11 @@ sap.ui.define([
                             // Update the existing item with the new data
                             Object.assign(selectedData, updatedData);
 
-                            var detailsModel = this.getView().getModel("claimModel");
-                            var allDetails = detailsModel.getProperty("/allDetails");
+                            var detailsModel = this.getView().getModel("localModel");
+                            var dataValue = detailsModel.getProperty("/dataValue");
                             var selectedIndex = selectedContext.getPath().split("/").pop();
-                            allDetails[selectedIndex] = selectedData;
-                            detailsModel.setProperty("/allDetails", allDetails);
+                            dataValue[selectedIndex] = selectedData;
+                            detailsModel.setProperty("/dataValue", dataValue);
 
                             // Enable form fields after updating
                             this.enableFormFields(true);
@@ -932,11 +809,11 @@ sap.ui.define([
                             // Update the existing item with the new data
                             Object.assign(selectedData, updatedData);
 
-                            var detailsModel = this.getView().getModel("claimModel");
-                            var allDetails = detailsModel.getProperty("/allDetails");
+                            var detailsModel = this.getView().getModel("localModel");
+                            var dataValue = detailsModel.getProperty("/dataValue");
                             var selectedIndex = selectedContext.getPath().split("/").pop();
-                            allDetails[selectedIndex] = selectedData;
-                            detailsModel.setProperty("/allDetails", allDetails);
+                            dataValue[selectedIndex] = selectedData;
+                            detailsModel.setProperty("/dataValue", dataValue);
 
                             // Enable form fields after updating
                             this.enableFormFields(true);
@@ -1115,8 +992,8 @@ sap.ui.define([
                 var items = this.byId("detailsList").getItems();
                 for (var i = 0; i < items.length; i++) {
                     var item = items[i];
-                    var requestedAmount = parseInt(item.getBindingContext("claimModel").getProperty("requestedAmount"));
-                    totalRequestedAmount += requestedAmount;
+                    var REQUESTED_AMOUNT = parseInt(item.getBindingContext("localModel").getProperty("REQUESTED_AMOUNT"));
+                    totalRequestedAmount += REQUESTED_AMOUNT;
                 }
 
                 // Update the text of the label with the total requested amount
@@ -1159,8 +1036,8 @@ sap.ui.define([
             },
             // handleSubmit: function () {
             //     var that = this;
-            //     var AD = this.getView().getModel("claimModel").getData();
-            //     let allDetails = AD.allDetails;
+            //     var AD = this.getView().getModel("localModel").getData();
+            //     let dataValue = AD.dataValue;
 
             //     var currentDate = new Date().toISOString().split('T')[0];
 
@@ -1171,7 +1048,7 @@ sap.ui.define([
             //             var maxClaimId = data.value.length > 0 ? data.value[0].CLAIM_ID : 0;
 
             //             // Iterate over each detail item and send the claim individually
-            //             allDetails.forEach(function (detail) {
+            //             dataValue.forEach(function (detail) {
             //                 // Construct claim object for each detail
             //                 var claimid = maxClaimId + 1;
             //                 var person = 90000;
@@ -1245,14 +1122,14 @@ sap.ui.define([
             // },
             handleSubmit: function () {
                 var that = this;
-                var claimModel = this.getView().getModel("claimModel");
-                var AD = claimModel.getData();
-                let allDetails = AD.allDetails;
+                var localModel = this.getView().getModel("localModel");
+                var AD = localModel.getData();
+                let dataValue = AD.dataValue;
             
                 var currentDate = new Date().toISOString().split('T')[0];
             
                 // Iterate over each detail item and send the claim individually
-                allDetails.forEach(function (detail) {
+                dataValue.forEach(function (detail) {
                     const claimIdNode = that.byId("claimid");
                     // Check if the detail has a claim ID
                     if (claimIdNode !== undefined && claimIdNode.getText()) {
@@ -1278,7 +1155,7 @@ sap.ui.define([
             
                         // Send the updated claim data to the server using Fetch API
                         fetch("./odata/v4/my/CLAIM_DETAILS?$filter=CLAIM_ID eq " + CLAIM_ID, {
-                            method: "PATCH",
+                            method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
                             },
@@ -1356,6 +1233,7 @@ sap.ui.define([
                 });
             },
             
+           
             onCustomerPress: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
@@ -1845,7 +1723,7 @@ sap.ui.define([
                         console.error('Error fetching claim details:', error);
                     });
             },
-
+            
             formatDate: function (sDate) {
                 if (!sDate) {
                     return "";
@@ -1923,39 +1801,39 @@ sap.ui.define([
                 // oOriginalBillCheckBox.setSelected(oFormData.ORIGINAL_BILL);
 
 
-                // Get the form elements for hospitalization details by their IDs
-                var oConsultancyCategoryComboBox = this.byId("consultancycategorys");
-                var oDoctorNameInput = this.byId("DN");
-                var oPatientIDInput = this.byId("ID");
-                var oHospitalStoreComboBox = this.byId("HospitalStore");
-                var oHospitalLocationComboBox = this.byId("Hospitallocation");
-                var oHospitalLocationOtherInput = this.byId("HL");
-                var oBillDatePicker = this.byId("billdate");
-                var oBillNoInput = this.byId("billno");
-                var oBillAmountInput = this.byId("billamount");
-                var oDiscountInput = this.byId("discount");
-                var oRequestedAmountInput = this.byId("requestamount");
-                var oDescriptionInput = this.byId("description");
+                // // Get the form elements for hospitalization details by their IDs
+                // var oConsultancyCategoryComboBox = this.byId("consultancycategorys");
+                // var oDoctorNameInput = this.byId("DN");
+                // var oPatientIDInput = this.byId("ID");
+                // var oHospitalStoreComboBox = this.byId("HospitalStore");
+                // var oHospitalLocationComboBox = this.byId("Hospitallocation");
+                // var oHospitalLocationOtherInput = this.byId("HL");
+                // var oBillDatePicker = this.byId("billdate");
+                // var oBillNoInput = this.byId("billno");
+                // var oBillAmountInput = this.byId("billamount");
+                // var oDiscountInput = this.byId("discount");
+                // var oRequestedAmountInput = this.byId("requestamount");
+                // var oDescriptionInput = this.byId("description");
 
-                // Set the values of form fields for hospitalization details from the retrieved data
-                oConsultancyCategoryComboBox.setSelectedKey(oFormData.CONSULTANCY_CATEGORY);
-                oDoctorNameInput.setValue(oFormData.DOCTOR_NAME);
-                oPatientIDInput.setValue(oFormData.PATIENT_ID);
-                oHospitalStoreComboBox.setSelectedKey(oFormData.MEDICAL_STORE);
-                oHospitalLocationComboBox.setSelectedKey(oFormData.HOSPITAL_LOCATION);
-                oHospitalLocationOtherInput.setValue(oFormData.HOSPITAL_LOCATION_OTHER);
-                oBillDatePicker.setValue(billDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
-                oBillNoInput.setValue(oFormData.BILL_NO);
-                oBillAmountInput.setValue(oFormData.BILL_AMOUNT);
-                oDiscountInput.setValue(oFormData.DISCOUNT);
-                oRequestedAmountInput.setValue(oFormData.REQUESTED_AMOUNT);
-                oDescriptionInput.setValue(oFormData.DESCRIPTION);
+                // // Set the values of form fields for hospitalization details from the retrieved data
+                // oConsultancyCategoryComboBox.setSelectedKey(oFormData.CONSULTANCY_CATEGORY);
+                // oDoctorNameInput.setValue(oFormData.DOCTOR_NAME);
+                // oPatientIDInput.setValue(oFormData.PATIENT_ID);
+                // oHospitalStoreComboBox.setSelectedKey(oFormData.MEDICAL_STORE);
+                // oHospitalLocationComboBox.setSelectedKey(oFormData.HOSPITAL_LOCATION);
+                // oHospitalLocationOtherInput.setValue(oFormData.HOSPITAL_LOCATION_OTHER);
+                // oBillDatePicker.setValue(billDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+                // oBillNoInput.setValue(oFormData.BILL_NO);
+                // oBillAmountInput.setValue(oFormData.BILL_AMOUNT);
+                // oDiscountInput.setValue(oFormData.DISCOUNT);
+                // oRequestedAmountInput.setValue(oFormData.REQUESTED_AMOUNT);
+                // oDescriptionInput.setValue(oFormData.DESCRIPTION);
 
-                // Show the editable form
+                // // Show the editable form
 
 
-                var oIconTabBar = this.byId("myIconTabBar");
-                oIconTabBar.setSelectedKey("Create");
+                // var oIconTabBar = this.byId("myIconTabBar");
+                // oIconTabBar.setSelectedKey("Create");
 
                 var oIconTabBar = this.byId("myIconTabBar");
                 oIconTabBar.setSelectedKey("claimDetails");
