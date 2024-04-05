@@ -1596,6 +1596,10 @@
                                                         text="Treatment For:"
                                                         class="detaillabel"
                                                     />
+                                                     <Label
+                                                        text="Treatment Type:"
+                                                        class="detaillabel"
+                                                    />
                                                     <Label
                                                         text="Select Dependent:"
                                                         class="detaillabel"
@@ -1631,6 +1635,10 @@
                                                         text="{localModel>/dataValue/0/TREATMENT_FOR}"
                                                         class="claimdetailtext"
                                                     />
+                                                     <Text
+                                                        text="{localModel>/dataValue/0/TREATMENT_TYPE}"
+                                                        class="claimdetailtext"
+                                                    />
                                                     <Text
                                                         text="{localModel>/dataValue/0/SELECT_DEPENDENTS}"
                                                         class="claimdetailtext"
@@ -1658,7 +1666,19 @@
                                                         class="detaillabel"
                                                     />
                                                     <Label
+                                                        text="Doctor Name:"
+                                                        class="detaillabel"
+                                                    />
+                                                     <Label
+                                                        text="Patient Id:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
                                                         text="Hospital/Medical Store:"
+                                                        class="detaillabel"
+                                                    />
+                                                    <Label
+                                                        text="Hospital/Medical Location:"
                                                         class="detaillabel"
                                                     />
                                                     <Label
@@ -1695,8 +1715,20 @@
                                                         text="{localModel>CONSULTANCY_CATEGORY}"
                                                         class="claimdetailtext"
                                                     />
+                                                     <Text
+                                                        text="{localModel>DOCTOR_NAME}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>PATIENT_ID}"
+                                                        class="claimdetailtext"
+                                                    />
                                                     <Text
                                                         text="{localModel>MEDICAL_STORE}"
+                                                        class="claimdetailtext"
+                                                    />
+                                                    <Text
+                                                        text="{localModel>HOSPITAL_LOCATION}"
                                                         class="claimdetailtext"
                                                     />
                                                     <Text
