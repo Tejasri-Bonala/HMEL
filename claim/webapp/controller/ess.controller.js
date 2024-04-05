@@ -1036,15 +1036,99 @@ sap.ui.define([
             },
               
             
+            // handleSubmit: function() {
+            //     var that = this;
+            //     var localModel = this.getView().getModel("localModel");
+            //     var AD = localModel.getData();
+            //     var currentDate = AD.currentDate;
+            //     var claimData = AD.dataValue[0]; // Assuming there's only one claim in the dataValue array
+
+            //     var currentDate = new Date().toISOString().split('T')[0];
+            
+            //     // Prepare the claim object
+            //     var claim = {
+            //         CLAIM_ID: parseInt(AD.claimId), 
+            //         PERSON_NUMBER: 9000, 
+            //         CLAIM_TYPE: AD.claimType, 
+            //         CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
+            //         CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+            //         TREATMENT_FOR: AD.treatmentFor,
+            //         TREATMENT_FOR_IF_OTHERS: claimData.treatmentForOther,
+            //         TREATMENT_TYPE: AD.treatmentType,
+            //         SELECT_DEPENDENTS: AD.selectedDependent,
+            //         SUBMITTED_DATE: currentDate,
+            //         DOCTOR_NAME: claimData.DOCTOR_NAME,
+            //         PATIENT_ID: claimData.PATIENT_ID,
+            //         HOSPITAL_LOCATION: claimData.HOSPITAL_LOCATION,
+            //         REQUESTED_AMOUNT: parseFloat(claimData.REQUESTED_AMOUNT),
+            //         CONSULTANCY_CATEGORY: claimData.CONSULTANCY_CATEGORY,
+            //         MEDICAL_STORE: claimData.MEDICAL_STORE,
+            //         BILL_DATE: new Date(claimData.BILL_DATE).toISOString(),
+            //         BILL_NO: claimData.BILL_NO,
+            //         BILL_AMOUNT: parseFloat(claimData.BILL_AMOUNT),
+            //         DISCOUNT: parseFloat(claimData.DISCOUNT),
+            //         REVIEW: claimData.REVIEW
+            //     };
+            
+            //     // Check if CLAIM_ID is not a number or is undefined
+            //     if (isNaN(claim.CLAIM_ID) || typeof claim.CLAIM_ID === 'undefined') {
+            //         // If CLAIM_ID is not a number or is undefined, fetch the maximum CLAIM_ID and then create a new record
+            //         fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then(data => {
+            //                 var maxClaimId = data.value[0].CLAIM_ID;
+            //                 // Increment the maxClaimId
+            //                 claim.CLAIM_ID = maxClaimId + 1;
+            //                 // Send the new claim data to the server
+            //                 saveClaimData(claim);
+            //             })
+            //             .catch(error => {
+            //                 sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
+            //             });
+            //     } else {
+            //         // Send the claim data to the server
+            //         saveClaimData(claim);
+            //     }
+            
+            //     function saveClaimData(claim) {
+            //         // Send the claim data to the server using Fetch API
+            //         fetch("./odata/v4/my/CLAIM_DETAILS", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json",
+            //             },
+            //             body: JSON.stringify(claim),
+            //         })
+            //         .then(result => {
+            //             if (!result.ok) {
+            //                 throw new Error('Failed to save claim data');
+            //             }
+            //             sap.m.MessageBox.success("Claim data saved successfully!", {
+            //                 onClose: function() {
+            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+            //                     oRouter.navTo("Login");
+            //                     window.location.reload();
+            //                 },
+            //             });
+            //         })
+            //         .catch(error => {
+            //             sap.m.MessageBox.error("Error while saving claim data: " + error.message);
+            //         });
+            //     }
+            // },            
+
             handleSubmit: function() {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
                 var currentDate = AD.currentDate;
                 var claimData = AD.dataValue[0]; // Assuming there's only one claim in the dataValue array
-
                 var currentDate = new Date().toISOString().split('T')[0];
-            
                 // Prepare the claim object
                 var claim = {
                     CLAIM_ID: parseInt(AD.claimId), 
@@ -1068,11 +1152,15 @@ sap.ui.define([
                     BILL_AMOUNT: parseFloat(claimData.BILL_AMOUNT),
                     DISCOUNT: parseFloat(claimData.DISCOUNT),
                     REVIEW: claimData.REVIEW
+
                 };
             
-                // Check if CLAIM_ID is not a number or is undefined
-                if (isNaN(claim.CLAIM_ID) || typeof claim.CLAIM_ID === 'undefined') {
-                    // If CLAIM_ID is not a number or is undefined, fetch the maximum CLAIM_ID and then create a new record
+                // Check if CLAIM_ID exists
+                if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
+                    // If CLAIM_ID exists, update the existing record
+                    updateClaimData(claim);
+                } else {
+                    // If CLAIM_ID is not provided, fetch the maximum CLAIM_ID and then create a new record
                     fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
                         .then(response => {
                             if (!response.ok) {
@@ -1090,13 +1178,36 @@ sap.ui.define([
                         .catch(error => {
                             sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
                         });
-                } else {
-                    // Send the claim data to the server
-                    saveClaimData(claim);
+                }
+            
+                function updateClaimData(claim) {
+                    // Send the updated claim data to the server using Fetch API
+                    fetch("./odata/v4/my/CLAIM_DETAILS?$filter=CLAIM_ID eq " + claim.CLAIM_ID, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(claim),
+                    })
+                    .then(result => {
+                        if (!result.ok) {
+                            throw new Error('Failed to update claim data');
+                        }
+                        sap.m.MessageBox.success("Claim data updated successfully!", {
+                            onClose: function() {
+                                var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                oRouter.navTo("Login");
+                                window.location.reload();
+                            },
+                        });
+                    })
+                    .catch(error => {
+                        sap.m.MessageBox.error("Error while updating claim data: " + error.message);
+                    });
                 }
             
                 function saveClaimData(claim) {
-                    // Send the claim data to the server using Fetch API
+                    // Send the new claim data to the server using Fetch API
                     fetch("./odata/v4/my/CLAIM_DETAILS", {
                         method: "POST",
                         headers: {
