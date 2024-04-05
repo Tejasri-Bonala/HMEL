@@ -1219,7 +1219,7 @@
                                                                             id="hospitalst"
                                                                         />
                                                                          <Text
-                                                                            text="{localModel>HOSPITALLOCATION}"
+                                                                            text="{localModel>HOSPITAL_LOCATION}"
                                                                             class="detailtext"
                                                                             id="hospitalLO"
                                                                         />
