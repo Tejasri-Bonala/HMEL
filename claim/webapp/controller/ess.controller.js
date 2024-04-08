@@ -540,7 +540,7 @@ sap.ui.define([
                                 BILL_NO: billNo,
                                 BILL_AMOUNT: billAmount,
                                 DISCOUNT: discount,
-                                REQUESTED_AMOUNT: data.value.finalAmount,
+                                REQUESTED_AMOUNT: requestedAmount,
                                 REVIEW: review,
                             };
                             this.addDetailsToModel(details);
@@ -1002,6 +1002,7 @@ sap.ui.define([
                 // this.byId("totalRequestedAmount").setText("Total Requested Amount: " + totalRequestedAmount);
                 this.byId("totalRequestedAmountValue").setText(totalRequestedAmount);
             },
+             
 
             validateOnlyCharacters: function (oEvent) {
                 var input = oEvent.getSource();
@@ -1035,93 +1036,6 @@ sap.ui.define([
                     sap.m.MessageBox.information(" Please enter Treatment For (If Other)");
                 }
             },
-
-
-            // handleSubmit: function() {
-            //     var that = this;
-            //     var localModel = this.getView().getModel("localModel");
-            //     var AD = localModel.getData();
-            //     var currentDate = AD.currentDate;
-            //     var claimData = AD.dataValue[0]; // Assuming there's only one claim in the dataValue array
-
-            //     var currentDate = new Date().toISOString().split('T')[0];
-
-            //     // Prepare the claim object
-            //     var claim = {
-            //         CLAIM_ID: parseInt(AD.claimId), 
-            //         PERSON_NUMBER: 9000, 
-            //         CLAIM_TYPE: AD.claimType, 
-            //         CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
-            //         CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
-            //         TREATMENT_FOR: AD.treatmentFor,
-            //         TREATMENT_FOR_IF_OTHERS: claimData.treatmentForOther,
-            //         TREATMENT_TYPE: AD.treatmentType,
-            //         SELECT_DEPENDENTS: AD.selectedDependent,
-            //         SUBMITTED_DATE: currentDate,
-            //         DOCTOR_NAME: claimData.DOCTOR_NAME,
-            //         PATIENT_ID: claimData.PATIENT_ID,
-            //         HOSPITAL_LOCATION: claimData.HOSPITAL_LOCATION,
-            //         REQUESTED_AMOUNT: parseFloat(claimData.REQUESTED_AMOUNT),
-            //         CONSULTANCY_CATEGORY: claimData.CONSULTANCY_CATEGORY,
-            //         MEDICAL_STORE: claimData.MEDICAL_STORE,
-            //         BILL_DATE: new Date(claimData.BILL_DATE).toISOString(),
-            //         BILL_NO: claimData.BILL_NO,
-            //         BILL_AMOUNT: parseFloat(claimData.BILL_AMOUNT),
-            //         DISCOUNT: parseFloat(claimData.DISCOUNT),
-            //         REVIEW: claimData.REVIEW
-            //     };
-
-            //     // Check if CLAIM_ID is not a number or is undefined
-            //     if (isNaN(claim.CLAIM_ID) || typeof claim.CLAIM_ID === 'undefined') {
-            //         // If CLAIM_ID is not a number or is undefined, fetch the maximum CLAIM_ID and then create a new record
-            //         fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
-            //                 }
-            //                 return response.json();
-            //             })
-            //             .then(data => {
-            //                 var maxClaimId = data.value[0].CLAIM_ID;
-            //                 // Increment the maxClaimId
-            //                 claim.CLAIM_ID = maxClaimId + 1;
-            //                 // Send the new claim data to the server
-            //                 saveClaimData(claim);
-            //             })
-            //             .catch(error => {
-            //                 sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
-            //             });
-            //     } else {
-            //         // Send the claim data to the server
-            //         saveClaimData(claim);
-            //     }
-
-            //     function saveClaimData(claim) {
-            //         // Send the claim data to the server using Fetch API
-            //         fetch("./odata/v4/my/CLAIM_DETAILS", {
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json",
-            //             },
-            //             body: JSON.stringify(claim),
-            //         })
-            //         .then(result => {
-            //             if (!result.ok) {
-            //                 throw new Error('Failed to save claim data');
-            //             }
-            //             sap.m.MessageBox.success("Claim data saved successfully!", {
-            //                 onClose: function() {
-            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-            //                     oRouter.navTo("Login");
-            //                     window.location.reload();
-            //                 },
-            //             });
-            //         })
-            //         .catch(error => {
-            //             sap.m.MessageBox.error("Error while saving claim data: " + error.message);
-            //         });
-            //     }
-            // },            
 
             handleSubmit: function () {
                 var that = this;
@@ -1177,7 +1091,14 @@ sap.ui.define([
                             saveClaimData(claim);
                         })
                         .catch(error => {
-                            sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
+                            sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message,
+                            {
+                                onClose: function () {
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                    oRouter.navTo("Login");
+                                    window.location.reload();
+                                },
+                            });
                         });
                 }
 
@@ -1203,7 +1124,14 @@ sap.ui.define([
                             });
                         })
                         .catch(error => {
-                            sap.m.MessageBox.error("Error while updating claim data: " + error.message);
+                            sap.m.MessageBox.error("Error while updating claim data: " + error.message,{
+
+                                onClose: function () {
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                    oRouter.navTo("Login");
+                                    window.location.reload();
+                                },
+                            });
                         });
                 }
 
@@ -1229,7 +1157,13 @@ sap.ui.define([
                             });
                         })
                         .catch(error => {
-                            sap.m.MessageBox.error("Error while saving claim data: " + error.message);
+                            sap.m.MessageBox.error("Error while saving claim data: " + error.message,{
+                                onClose: function () {
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+                                    oRouter.navTo("Login");
+                                    window.location.reload();
+                                },
+                        });
                         });
                 }
             },
