@@ -127,6 +127,12 @@
                                                                 class="label"
                                                                 visible="false"
                                                             />
+                                                             <Label
+                                                                id="claimId"
+                                                                text="Id"
+                                                                class="label"
+                                                                visible="false"
+                                                            />
                                                             <Label
                                                                 text="Claim Type"
                                                                 class="label"
@@ -1038,6 +1044,11 @@
                                                                             visible="true"
                                                                         />
                                                                         <Label
+                                                                            text="ID:"
+                                                                            class="detaillabel"
+                                                                            visible="true"
+                                                                        />
+                                                                        <Label
                                                                             text="Claim Person:"
                                                                             class="detaillabel"
                                                                         />
@@ -1083,6 +1094,11 @@
                                                                             class="claimtext"
                                                                             visible="true"
                                                                         />
+                                                                         <Text
+                                                                            text="{localModel>/Id}"
+                                                                            class="claimtext"
+                                                                            id="idc"
+                                                                        />
                                                                         <Text
                                                                             text="Teja"
                                                                             class="claimtext"
@@ -1092,6 +1108,7 @@
                                                                             class="claimtext"
                                                                             id="claimt"
                                                                         />
+                                                                        
 
                                                                         <Text
                                                                             text="{localModel>/claimStartDate}"
@@ -1572,6 +1589,7 @@
                                         <CustomListItem>
                                             <HBox class="item">
                                                 <VBox class="details-column">
+                                               
                                                     <Label
                                                         text="Claim ID:"
                                                         class="detaillabel"
@@ -1610,9 +1628,10 @@
                                                     />
                                                 </VBox>
                                                 <VBox class="details-column">
+                                                  
                                                     <Text
                                                         text="{localModel>/dataValue/0/CLAIM_ID}"
-                                                        id="claimIdText"
+                                                        id="IdText"
                                                         class="claimdetailtext"
                                                     />
                                                     <Text
@@ -1661,6 +1680,10 @@
                                         <CustomListItem>
                                             <HBox class="item">
                                                 <VBox class="details-column">
+                                                 <Label
+                                                        text="ID:"
+                                                        class="detaillabel"
+                                                    />
                                                     <Label
                                                         text="Consultancy Category:"
                                                         class="detaillabel"
@@ -1711,6 +1734,11 @@
                                                     />
                                                 </VBox>
                                                 <VBox class="details-column">
+                                                  <Text
+                                                        text="{localModel>ID}"
+                                                        id="claimIdText"
+                                                        class="claimdetailtext"
+                                                    />
                                                     <Text
                                                         text="{localModel>CONSULTANCY_CATEGORY}"
                                                         class="claimdetailtext"
