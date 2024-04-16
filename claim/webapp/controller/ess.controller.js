@@ -1043,126 +1043,14 @@ sap.ui.define([
             //     var that = this;
             //     var localModel = this.getView().getModel("localModel");
             //     var AD = localModel.getData();
-            //     var currentDate = AD.currentDate;
-            //     var claimData = AD.dataValue[0]; // Assuming there's only one claim in the dataValue array
-            //     var currentDate = new Date().toISOString().split('T')[0];
-            //     // Prepare the claim object
-            //     var claim = {
-            //         CLAIM_ID: parseInt(AD.claimId), 
-            //         PERSON_NUMBER: 9000, 
-            //         CLAIM_TYPE: AD.claimType, 
-            //         CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
-            //         CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
-            //         TREATMENT_FOR: AD.treatmentFor,
-            //         TREATMENT_FOR_IF_OTHERS: claimData.treatmentForOther,
-            //         TREATMENT_TYPE: AD.treatmentType,
-            //         SELECT_DEPENDENTS: AD.selectedDependent,
-            //         SUBMITTED_DATE: currentDate,
-            //         DOCTOR_NAME: claimData.DOCTOR_NAME,
-            //         PATIENT_ID: claimData.PATIENT_ID,
-            //         HOSPITAL_LOCATION: claimData.HOSPITAL_LOCATION,
-            //         REQUESTED_AMOUNT: parseFloat(claimData.REQUESTED_AMOUNT),
-            //         CONSULTANCY_CATEGORY: claimData.CONSULTANCY_CATEGORY,
-            //         MEDICAL_STORE: claimData.MEDICAL_STORE,
-            //         BILL_DATE: new Date(claimData.BILL_DATE).toISOString(),
-            //         BILL_NO: claimData.BILL_NO,
-            //         BILL_AMOUNT: parseFloat(claimData.BILL_AMOUNT),
-            //         DISCOUNT: parseFloat(claimData.DISCOUNT),
-            //         REVIEW: claimData.REVIEW
-
-            //     };
-
-            //     // Check if CLAIM_ID exists
-            //     if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
-            //         // If CLAIM_ID exists, update the existing record
-            //         updateClaimData(claim);
-            //     } else {
-            //         // If CLAIM_ID is not provided, fetch the maximum CLAIM_ID and then create a new record
-            //         fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
-            //                 }
-            //                 return response.json();
-            //             })
-            //             .then(data => {
-            //                 var maxClaimId = data.value[0].CLAIM_ID;
-            //                 // Increment the maxClaimId
-            //                 claim.CLAIM_ID = maxClaimId + 1;
-            //                 // Send the new claim data to the server
-            //                 saveClaimData(claim);
-            //             })
-            //             .catch(error => {
-            //                 sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
-            //             });
-            //     }
-
-            //     function updateClaimData(claim) {
-            //         // Send the updated claim data to the server using Fetch API
-            //         fetch("./odata/v4/my/CLAIM_DETAILS?$filter=CLAIM_ID eq " + claim.CLAIM_ID, {
-            //             method: "PATCH",
-            //             headers: {
-            //                 "Content-Type": "application/json",
-            //             },
-            //             body: JSON.stringify(claim),
-            //         })
-            //         .then(result => {
-            //             if (!result.ok) {
-            //                 throw new Error('Failed to update claim data');
-            //             }
-            //             sap.m.MessageBox.success("Claim data updated successfully!", {
-            //                 onClose: function() {
-            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-            //                     oRouter.navTo("Login");
-            //                     window.location.reload();
-            //                 },
-            //             });
-            //         })
-            //         .catch(error => {
-            //             sap.m.MessageBox.error("Error while updating claim data: " + error.message);
-            //         });
-            //     }
-
-            //     function saveClaimData(claim) {
-            //         // Send the new claim data to the server using Fetch API
-            //         fetch("./odata/v4/my/CLAIM_DETAILS", {
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json",
-            //             },
-            //             body: JSON.stringify(claim),
-            //         })
-            //         .then(result => {
-            //             if (!result.ok) {
-            //                 throw new Error('Failed to save claim data');
-            //             }
-            //             sap.m.MessageBox.success("Claim data saved successfully!", {
-            //                 onClose: function() {
-            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-            //                     oRouter.navTo("Login");
-            //                     window.location.reload();
-            //                 },
-            //             });
-            //         })
-            //         .catch(error => {
-            //             sap.m.MessageBox.error("Error while saving claim data: " + error.message);
-            //         });
-            //     }
-            // },            
-
-
-            // handleSubmit: function () {
-            //     var that = this;
-            //     var localModel = this.getView().getModel("localModel");
-            //     var AD = localModel.getData();
             //     var allDetails = AD.dataValue;
             //     var id = AD.dataValue[0].ID;
-            //     console.log(id)
+            //     console.log(id);
             //     var currentDate = new Date().toISOString().split('T')[0];
-
-            //     allDetails.forEach(function (detail) {
+                
+            //     allDetails.forEach(function(detail) {
             //         var claim = {
-
+            //             // ID:parseInt(detail.ID),
             //             CLAIM_ID: parseInt(AD.claimId),
             //             PERSON_NUMBER: 9000,
             //             CLAIM_TYPE: AD.claimType,
@@ -1185,11 +1073,10 @@ sap.ui.define([
             //             DISCOUNT: parseFloat(detail.DISCOUNT),
             //             REVIEW: detail.REVIEW,
             //             APPROVED_AMOUNT: 0
-
             //         };
-
+                    
             //         if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
-            //             updateClaimData(claim);
+            //             updateClaimData(claim, id);
             //         } else {
             //             fetchMaxClaimId()
             //                 .then(maxClaimId => {
@@ -1200,67 +1087,39 @@ sap.ui.define([
             //                     handleError(error);
             //                 });
             //         }
-            //     });
 
-            //     function updateClaimData(claim) {
-            //         // fetch("./odata/v4/my/CLAIM_DETAILS/claim.ID/claim.CLAIM_ID", {
-            //         //     method: "PATCH",
-            //         //     headers: {
-            //         //         "Content-Type": "application/json",
-            //         //     },
-            //         //     body: JSON.stringify(claim),
-            //         // })
-            //         var claimData = JSON.stringify(claim);
+            //     });
+                
+            //     function updateClaimData(claim, id) {
             //         $.ajax({
             //             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
-            //             type: 'PUT', // Assuming you're updating data
+            //             type: 'PATCH',
             //             contentType: 'application/json',
-            //             data: claimData,
-            //             success: function (response) {
-            //                 // Handle success
+            //             data: JSON.stringify(claim),
+            //             success: function(response) {
+            //                 showMessageAndNavigate("Claim data updated successfully!");
             //             },
-            //             error: function (xhr, status, error) {
-            //                 // Handle error
+            //             error: function(xhr, status, error) {
+            //                 handleError(xhr, status, error);
             //             }
             //         });
-            //         // fetch(`./odata/v4/my/CLAIM_DETAILS/${id}`, {
-            //         //     method: "PATCH",
-            //         //     headers: {
-            //         //         "Content-Type": "application/json",
-            //         //     },
-            //         //     body: JSON.stringify(claim),
-            //         // })
-
-            //         // .then(response => {
-            //         //     if (!response.ok) {
-            //         //         throw new Error('Failed to update claim data');
-            //         //     }
-            //         //     showMessageAndNavigate("Claim data updated successfully!");
-            //         // })
-            //         // .catch(error => {
-            //         //     handleError(error);
-            //         // });
             //     }
-
+                
             //     function saveClaimData(claim) {
-            //         fetch("./odata/v4/my/CLAIM_DETAILS", {
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json",
-            //             },
-            //             body: JSON.stringify(claim),
-            //         })
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to save claim data');
-            //                 }
+            //         $.ajax({
+            //             url: '/odata/v4/my/CLAIM_DETAILS',
+            //             type: 'POST',
+            //             contentType: 'application/json',
+            //             data: JSON.stringify(claim),
+            //             success: function(response) {
             //                 showMessageAndNavigate("Claim data saved successfully!");
-            //             })
-            //             .catch(error => {
-            //                 handleError(error);
-            //             });
+            //             },
+            //             error: function(xhr, status, error) {
+            //                 handleError(xhr, status, error);
+            //             }
+            //         });
             //     }
-
+                
             //     function fetchMaxClaimId() {
             //         return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
             //             .then(response => {
@@ -1273,41 +1132,40 @@ sap.ui.define([
             //                 return data.value[0].CLAIM_ID;
             //             });
             //     }
-
+                
             //     function showMessageAndNavigate(message) {
             //         sap.m.MessageBox.success(message, {
-            //             onClose: function () {
+            //             onClose: function() {
             //                 var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
             //                 oRouter.navTo("Login");
             //                 window.location.reload();
             //             },
             //         });
             //     }
-
-            //     function handleError(error) {
-            //         sap.m.MessageBox.error("Error: " + error.message, {
-            //             onClose: function () {
-            //                 // var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-            //                 // oRouter.navTo("Login");
-            //                 // window.location.reload();
+                
+            //     function handleError(xhr, status, error) {
+            //         var errorMessage = "Error: " + error;
+            //         if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+            //             errorMessage += "\n" + xhr.responseJSON.error.message;
+            //         }
+            //         sap.m.MessageBox.error(errorMessage, {
+            //             onClose: function() {
+            //                 // Handle error closing if needed
             //             },
             //         });
             //     }
             // },
-
 
             handleSubmit: function() {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
                 var allDetails = AD.dataValue;
-                var id = AD.dataValue[0].ID;
-                console.log(id);
                 var currentDate = new Date().toISOString().split('T')[0];
-                
+                var promises = [];
+            
                 allDetails.forEach(function(detail) {
                     var claim = {
-                        // ID:parseInt(detail.ID),
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
                         CLAIM_TYPE: AD.claimType,
@@ -1331,52 +1189,63 @@ sap.ui.define([
                         REVIEW: detail.REVIEW,
                         APPROVED_AMOUNT: 0
                     };
-                    
-                    if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
-                        updateClaimData(claim, id);
-                    } else {
+            
+                    var promise = !isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined' ? 
+                        updateClaimData(claim, detail.ID) : 
                         fetchMaxClaimId()
                             .then(maxClaimId => {
                                 claim.CLAIM_ID = maxClaimId + 1;
-                                saveClaimData(claim);
+                                return saveClaimData(claim);
                             })
                             .catch(error => {
                                 handleError(error);
                             });
-                    }
-
+            
+                    promises.push(promise);
                 });
-                
+            
+                Promise.all(promises)
+                    .then(function() {
+                        showMessageAndNavigate("All claims updated or saved successfully!");
+                    })
+                    .catch(function(error) {
+                        handleError(error);
+                    });
+            
                 function updateClaimData(claim, id) {
-                    $.ajax({
-                        url: '/odata/v4/my/CLAIM_DETAILS/' + id,
-                        type: 'PATCH',
-                        contentType: 'application/json',
-                        data: JSON.stringify(claim),
-                        success: function(response) {
-                            showMessageAndNavigate("Claim data updated successfully!");
-                        },
-                        error: function(xhr, status, error) {
-                            handleError(xhr, status, error);
-                        }
+                    return new Promise(function(resolve, reject) {
+                        $.ajax({
+                            url: '/odata/v4/my/CLAIM_DETAILS/' + id,
+                            type: 'PATCH',
+                            contentType: 'application/json',
+                            data: JSON.stringify(claim),
+                            success: function(response) {
+                                resolve();
+                            },
+                            error: function(xhr, status, error) {
+                                reject(error);
+                            }
+                        });
                     });
                 }
-                
+            
                 function saveClaimData(claim) {
-                    $.ajax({
-                        url: '/odata/v4/my/CLAIM_DETAILS',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(claim),
-                        success: function(response) {
-                            showMessageAndNavigate("Claim data saved successfully!");
-                        },
-                        error: function(xhr, status, error) {
-                            handleError(xhr, status, error);
-                        }
+                    return new Promise(function(resolve, reject) {
+                        $.ajax({
+                            url: '/odata/v4/my/CLAIM_DETAILS',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(claim),
+                            success: function(response) {
+                                resolve();
+                            },
+                            error: function(xhr, status, error) {
+                                reject(error);
+                            }
+                        });
                     });
                 }
-                
+            
                 function fetchMaxClaimId() {
                     return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
                         .then(response => {
@@ -1389,7 +1258,7 @@ sap.ui.define([
                             return data.value[0].CLAIM_ID;
                         });
                 }
-                
+            
                 function showMessageAndNavigate(message) {
                     sap.m.MessageBox.success(message, {
                         onClose: function() {
@@ -1399,12 +1268,9 @@ sap.ui.define([
                         },
                     });
                 }
-                
-                function handleError(xhr, status, error) {
+            
+                function handleError(error) {
                     var errorMessage = "Error: " + error;
-                    if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
-                        errorMessage += "\n" + xhr.responseJSON.error.message;
-                    }
                     sap.m.MessageBox.error(errorMessage, {
                         onClose: function() {
                             // Handle error closing if needed
@@ -1412,6 +1278,7 @@ sap.ui.define([
                     });
                 }
             },
+            
             
 
             onCustomerPress: function (oEvent) {
