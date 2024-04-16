@@ -704,21 +704,21 @@ sap.ui.define([
             UpdatePress: function () {
                 var list = this.byId("detailsList");
                 var selectedItems = list.getSelectedItems();
-            
+
                 if (selectedItems.length !== 1) {
                     MessageBox.error("Please select exactly one item to update.");
                     return;
                 }
-            
+
                 var selectedContext = selectedItems[0].getBindingContext("localModel");
-            
+
                 if (!selectedContext) {
                     MessageBox.error("No data to update.");
                     return;
                 }
-            
+
                 var selectedData = selectedContext.getObject();
-            
+
                 // Assuming you have form fields that represent the properties you want to update
                 var updatedData = {
                     CONSULTANCY_CATEGORY: this.byId("consultancycategorys").getSelectedKey(),
@@ -734,9 +734,9 @@ sap.ui.define([
                     REQUESTED_AMOUNT: this.byId("requestamount").getValue(), // Include requestedAmount here
                     REVIEW: this.byId("description").getValue()
                 };
-            
+
                 var missingFields = [];
-            
+
                 if (!updatedData.CONSULTANCY_CATEGORY) missingFields.push("Consultancy Category");
                 if (!updatedData.DOCTOR_NAME) missingFields.push("Doctor's Name");
                 if (!updatedData.PATIENT_ID) missingFields.push("Patient ID");
@@ -746,21 +746,21 @@ sap.ui.define([
                 if (!updatedData.BILL_NO) missingFields.push("Bill No");
                 if (!updatedData.BILL_AMOUNT) missingFields.push("Bill Amount(Rs)");
                 if (!updatedData.REQUESTED_AMOUNT) missingFields.push("Requested Amount");
-            
+
                 if (missingFields.length > 0) {
                     var errorMessage = "Please fill in the following required fields:\n" + missingFields.join("\n");
                     MessageBox.error(errorMessage);
                     return;
                 }
-            
+
                 // Perform server-side validation
                 var startDate = this.byId("startDatePicker1").getDateValue();
                 var startDate = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }).format(startDate);
                 var endDate = this.byId("endDatePicker1").getDateValue();
                 var endDate = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }).format(endDate);
-            
+
                 var requestedAmount = updatedData.REQUESTED_AMOUNT; // Define requestedAmount here
-            
+
                 // Assuming you have the necessary data for validation in updatedData and selectedData
                 // Call your server-side validation function
                 fetch("./odata/v4/my/validations(endDate=" + endDate + ",startDate=" + startDate + ",requestedAmount=" + requestedAmount + ",category='" + updatedData.CONSULTANCY_CATEGORY + "')", {
@@ -776,26 +776,26 @@ sap.ui.define([
                         if (data.value.success) {
                             // Update requestedAmount to match finalAmount from the response
                             updatedData.requestedAmount = data.value.finalAmount;
-                    
+
                             // Proceed with the update if validation passes
                             // Update the existing item with the new data
                             Object.assign(selectedData, updatedData);
-                    
+
                             var detailsModel = this.getView().getModel("localModel");
                             var dataValue = detailsModel.getProperty("/dataValue");
                             var selectedIndex = selectedContext.getPath().split("/").pop();
                             dataValue[selectedIndex] = selectedData;
                             detailsModel.setProperty("/dataValue", dataValue);
-                    
+
                             // Enable form fields after updating
                             this.enableFormFields(true);
-                    
+
                             // Show the Add, Delete, Edit, Clone buttons, hide the Update and Cancel buttons
                             this.toggleButtonsVisibility(true, false, false, true, true);
-                    
+
                             // Refresh the list binding to reflect the updated data
                             this.byId("detailsList").getBinding("items").refresh();
-                    
+
                             MessageBox.success("Data updated successfully!\nYour Eligible Amount is " + data.value.finalAmount, {
                                 onClose: function () {
                                     // Clear the form
@@ -804,27 +804,27 @@ sap.ui.define([
                                     this.updateTotalRequestedAmount();
                                 }.bind(this)
                             });
-                    
+
                         } else {
                             // Category not found, directly update it without validation
                             // Update the existing item with the new data
                             Object.assign(selectedData, updatedData);
-                    
+
                             var detailsModel = this.getView().getModel("localModel");
                             var dataValue = detailsModel.getProperty("/dataValue");
                             var selectedIndex = selectedContext.getPath().split("/").pop();
                             dataValue[selectedIndex] = selectedData;
                             detailsModel.setProperty("/dataValue", dataValue);
-                    
+
                             // Enable form fields after updating
                             this.enableFormFields(true);
-                    
+
                             // Show the Add, Delete, Edit, Clone buttons, hide the Update and Cancel buttons
                             this.toggleButtonsVisibility(true, false, false, true, true);
-                    
+
                             // Refresh the list binding to reflect the updated data
                             this.byId("detailsList").getBinding("items").refresh();
-                    
+
                             MessageBox.success("Data updated successfully!", {
                                 onClose: function () {
                                     // Clear the form
@@ -840,10 +840,10 @@ sap.ui.define([
                         MessageBox.error("Error occurred while fetching or processing validation data");
                         console.error('Error:', error);
                     });
-            },            
+            },
 
 
-          
+
 
             CancelPress: function () {
                 // Disable form fields after canceling
@@ -1004,7 +1004,7 @@ sap.ui.define([
                 // this.byId("totalRequestedAmount").setText("Total Requested Amount: " + totalRequestedAmount);
                 this.byId("totalRequestedAmountValue").setText(totalRequestedAmount);
             },
-             
+
 
             validateOnlyCharacters: function (oEvent) {
                 var input = oEvent.getSource();
@@ -1071,7 +1071,7 @@ sap.ui.define([
             //         REVIEW: claimData.REVIEW
 
             //     };
-            
+
             //     // Check if CLAIM_ID exists
             //     if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
             //         // If CLAIM_ID exists, update the existing record
@@ -1096,7 +1096,7 @@ sap.ui.define([
             //                 sap.m.MessageBox.error("Error while fetching maximum CLAIM_ID: " + error.message);
             //             });
             //     }
-            
+
             //     function updateClaimData(claim) {
             //         // Send the updated claim data to the server using Fetch API
             //         fetch("./odata/v4/my/CLAIM_DETAILS?$filter=CLAIM_ID eq " + claim.CLAIM_ID, {
@@ -1122,7 +1122,7 @@ sap.ui.define([
             //             sap.m.MessageBox.error("Error while updating claim data: " + error.message);
             //         });
             //     }
-            
+
             //     function saveClaimData(claim) {
             //         // Send the new claim data to the server using Fetch API
             //         fetch("./odata/v4/my/CLAIM_DETAILS", {
@@ -1151,16 +1151,163 @@ sap.ui.define([
             // },            
 
 
+            // handleSubmit: function () {
+            //     var that = this;
+            //     var localModel = this.getView().getModel("localModel");
+            //     var AD = localModel.getData();
+            //     var allDetails = AD.dataValue;
+            //     var id = AD.dataValue[0].ID;
+            //     console.log(id)
+            //     var currentDate = new Date().toISOString().split('T')[0];
+
+            //     allDetails.forEach(function (detail) {
+            //         var claim = {
+
+            //             CLAIM_ID: parseInt(AD.claimId),
+            //             PERSON_NUMBER: 9000,
+            //             CLAIM_TYPE: AD.claimType,
+            //             CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
+            //             CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+            //             TREATMENT_FOR: AD.treatmentFor,
+            //             TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
+            //             TREATMENT_TYPE: AD.treatmentType,
+            //             SELECT_DEPENDENTS: AD.selectedDependent,
+            //             SUBMITTED_DATE: currentDate,
+            //             DOCTOR_NAME: detail.DOCTOR_NAME,
+            //             PATIENT_ID: detail.PATIENT_ID,
+            //             HOSPITAL_LOCATION: detail.HOSPITAL_LOCATION,
+            //             REQUESTED_AMOUNT: parseFloat(detail.REQUESTED_AMOUNT),
+            //             CONSULTANCY_CATEGORY: detail.CONSULTANCY_CATEGORY,
+            //             MEDICAL_STORE: detail.MEDICAL_STORE,
+            //             BILL_DATE: new Date(detail.BILL_DATE).toISOString(),
+            //             BILL_NO: detail.BILL_NO,
+            //             BILL_AMOUNT: parseFloat(detail.BILL_AMOUNT),
+            //             DISCOUNT: parseFloat(detail.DISCOUNT),
+            //             REVIEW: detail.REVIEW,
+            //             APPROVED_AMOUNT: 0
+
+            //         };
+
+            //         if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
+            //             updateClaimData(claim);
+            //         } else {
+            //             fetchMaxClaimId()
+            //                 .then(maxClaimId => {
+            //                     claim.CLAIM_ID = maxClaimId + 1;
+            //                     saveClaimData(claim);
+            //                 })
+            //                 .catch(error => {
+            //                     handleError(error);
+            //                 });
+            //         }
+            //     });
+
+            //     function updateClaimData(claim) {
+            //         // fetch("./odata/v4/my/CLAIM_DETAILS/claim.ID/claim.CLAIM_ID", {
+            //         //     method: "PATCH",
+            //         //     headers: {
+            //         //         "Content-Type": "application/json",
+            //         //     },
+            //         //     body: JSON.stringify(claim),
+            //         // })
+            //         var claimData = JSON.stringify(claim);
+            //         $.ajax({
+            //             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
+            //             type: 'PUT', // Assuming you're updating data
+            //             contentType: 'application/json',
+            //             data: claimData,
+            //             success: function (response) {
+            //                 // Handle success
+            //             },
+            //             error: function (xhr, status, error) {
+            //                 // Handle error
+            //             }
+            //         });
+            //         // fetch(`./odata/v4/my/CLAIM_DETAILS/${id}`, {
+            //         //     method: "PATCH",
+            //         //     headers: {
+            //         //         "Content-Type": "application/json",
+            //         //     },
+            //         //     body: JSON.stringify(claim),
+            //         // })
+
+            //         // .then(response => {
+            //         //     if (!response.ok) {
+            //         //         throw new Error('Failed to update claim data');
+            //         //     }
+            //         //     showMessageAndNavigate("Claim data updated successfully!");
+            //         // })
+            //         // .catch(error => {
+            //         //     handleError(error);
+            //         // });
+            //     }
+
+            //     function saveClaimData(claim) {
+            //         fetch("./odata/v4/my/CLAIM_DETAILS", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json",
+            //             },
+            //             body: JSON.stringify(claim),
+            //         })
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to save claim data');
+            //                 }
+            //                 showMessageAndNavigate("Claim data saved successfully!");
+            //             })
+            //             .catch(error => {
+            //                 handleError(error);
+            //             });
+            //     }
+
+            //     function fetchMaxClaimId() {
+            //         return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then(data => {
+            //                 return data.value[0].CLAIM_ID;
+            //             });
+            //     }
+
+            //     function showMessageAndNavigate(message) {
+            //         sap.m.MessageBox.success(message, {
+            //             onClose: function () {
+            //                 var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+            //                 oRouter.navTo("Login");
+            //                 window.location.reload();
+            //             },
+            //         });
+            //     }
+
+            //     function handleError(error) {
+            //         sap.m.MessageBox.error("Error: " + error.message, {
+            //             onClose: function () {
+            //                 // var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+            //                 // oRouter.navTo("Login");
+            //                 // window.location.reload();
+            //             },
+            //         });
+            //     }
+            // },
+
+
             handleSubmit: function() {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
                 var allDetails = AD.dataValue;
+                var id = AD.dataValue[0].ID;
+                console.log(id);
                 var currentDate = new Date().toISOString().split('T')[0];
-            
+                
                 allDetails.forEach(function(detail) {
                     var claim = {
-                        ID:AD.Id,
+                        // ID:parseInt(detail.ID),
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
                         CLAIM_TYPE: AD.claimType,
@@ -1182,12 +1329,11 @@ sap.ui.define([
                         BILL_AMOUNT: parseFloat(detail.BILL_AMOUNT),
                         DISCOUNT: parseFloat(detail.DISCOUNT),
                         REVIEW: detail.REVIEW,
-                        APPROVED_AMOUNT:0
-
-                                           };
-            
+                        APPROVED_AMOUNT: 0
+                    };
+                    
                     if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
-                        updateClaimData(claim);
+                        updateClaimData(claim, id);
                     } else {
                         fetchMaxClaimId()
                             .then(maxClaimId => {
@@ -1198,54 +1344,39 @@ sap.ui.define([
                                 handleError(error);
                             });
                     }
+
                 });
-            
-                function updateClaimData(claim) {
-                    // fetch("./odata/v4/my/CLAIM_DETAILS/claim.ID/claim.CLAIM_ID", {
-                    //     method: "PATCH",
-                    //     headers: {
-                    //         "Content-Type": "application/json",
-                    //     },
-                    //     body: JSON.stringify(claim),
-                    // })
-                    fetch(`./odata/v4/my/CLAIM_DETAILS/${claim.ID}/${claim.CLAIM_ID}`, {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
+                
+                function updateClaimData(claim, id) {
+                    $.ajax({
+                        url: '/odata/v4/my/CLAIM_DETAILS/' + id,
+                        type: 'PATCH',
+                        contentType: 'application/json',
+                        data: JSON.stringify(claim),
+                        success: function(response) {
+                            showMessageAndNavigate("Claim data updated successfully!");
                         },
-                        body: JSON.stringify(claim),
-                    })
-                    
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to update claim data');
+                        error: function(xhr, status, error) {
+                            handleError(xhr, status, error);
                         }
-                        showMessageAndNavigate("Claim data updated successfully!");
-                    })
-                    .catch(error => {
-                        handleError(error);
                     });
                 }
-            
+                
                 function saveClaimData(claim) {
-                    fetch("./odata/v4/my/CLAIM_DETAILS", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
+                    $.ajax({
+                        url: '/odata/v4/my/CLAIM_DETAILS',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(claim),
+                        success: function(response) {
+                            showMessageAndNavigate("Claim data saved successfully!");
                         },
-                        body: JSON.stringify(claim),
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to save claim data');
+                        error: function(xhr, status, error) {
+                            handleError(xhr, status, error);
                         }
-                        showMessageAndNavigate("Claim data saved successfully!");
-                    })
-                    .catch(error => {
-                        handleError(error);
                     });
                 }
-            
+                
                 function fetchMaxClaimId() {
                     return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
                         .then(response => {
@@ -1258,7 +1389,7 @@ sap.ui.define([
                             return data.value[0].CLAIM_ID;
                         });
                 }
-            
+                
                 function showMessageAndNavigate(message) {
                     sap.m.MessageBox.success(message, {
                         onClose: function() {
@@ -1268,21 +1399,21 @@ sap.ui.define([
                         },
                     });
                 }
-            
-                function handleError(error) {
-                    sap.m.MessageBox.error("Error: " + error.message, {
+                
+                function handleError(xhr, status, error) {
+                    var errorMessage = "Error: " + error;
+                    if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
+                        errorMessage += "\n" + xhr.responseJSON.error.message;
+                    }
+                    sap.m.MessageBox.error(errorMessage, {
                         onClose: function() {
-                            var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-                            oRouter.navTo("Login");
-                            window.location.reload();
+                            // Handle error closing if needed
                         },
                     });
                 }
             },
-
             
 
-            
             onCustomerPress: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
@@ -1808,23 +1939,23 @@ sap.ui.define([
                 // Get the Claim ID label by its ID
                 var oClaimIdLabel = this.byId("claimIdLabel");
 
-                var oClaimId = this.byId("claimId");
+                // var oClaimId = this.byId("claimId");
 
                 // Update the text of the Claim ID label with the Claim ID value
                 // oClaimIdLabel.setText(oFormData.CLAIM_ID);
                 var claimId = oFormData.CLAIM_ID;
 
-                var Id = oFormData.ID
+                // var Id = oFormData.ID
 
                 // oClaimIdLabel.setText("Claim Id: " + claimId);
 
                 oClaimIdLabel.setText(claimId);
 
-                oClaimId.setText(Id);
+                // oClaimId.setText(Id);
                 // Make the Claim ID label visible
                 oClaimIdLabel.setVisible(true);
 
-                oClaimId.setVisible(true);
+                // oClaimId.setVisible(true);
 
                 // Get the form elements by their IDs
                 var oClaimTypeComboBox = this.byId("CT");
@@ -1857,7 +1988,7 @@ sap.ui.define([
                 // oOriginalBillCheckBox.setSelected(oFormData.ORIGINAL_BILL);
 
 
-                
+
 
                 var oIconTabBar = this.byId("myIconTabBar");
                 oIconTabBar.setSelectedKey("claimDetails");
@@ -1871,8 +2002,7 @@ sap.ui.define([
 
                 // Return the numeric-only value
                 return sNumericOnlyValue;
-            }
-
+            },
 
 
         });
