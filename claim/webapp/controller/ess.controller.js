@@ -1206,13 +1206,34 @@ sap.ui.define([
             
                 Promise.all(promises)
                     .then(function() {
-                        showMessageAndNavigate("All claims updated or saved successfully!");
+                        showMessageAndNavigate("claim updated or saved successfully!");
                     })
                     .catch(function(error) {
                         handleError(error);
                     });
             
+                // function updateClaimData(claim, id) {
+                //     console.time("Update claim")
+                //     return new Promise(function(resolve, reject) {
+                //         $.ajax({
+                //             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
+                //             type: 'PATCH',
+                //             contentType: 'application/json',
+                //             data: JSON.stringify(claim),
+                //             success: function(response) {
+                //                 console.timeEnd('Update claim')
+                //                 resolve();
+                //             },
+                //             error: function(xhr, status, error) {
+                //                 reject(error);
+                //             }
+                //         });
+                //     });
+                // }
                 function updateClaimData(claim, id) {
+                    console.time("Update claim")
+                    // Set status to "Submitted"
+                    claim.STATUS = "Submitted";
                     return new Promise(function(resolve, reject) {
                         $.ajax({
                             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
@@ -1220,6 +1241,7 @@ sap.ui.define([
                             contentType: 'application/json',
                             data: JSON.stringify(claim),
                             success: function(response) {
+                                console.timeEnd('Update claim')
                                 resolve();
                             },
                             error: function(xhr, status, error) {
@@ -1228,6 +1250,8 @@ sap.ui.define([
                         });
                     });
                 }
+                
+                
             
                 function saveClaimData(claim) {
                     return new Promise(function(resolve, reject) {
@@ -1278,9 +1302,22 @@ sap.ui.define([
                     });
                 }
             },
+            onTableUpdate: function() {
+                var oTable = this.getView().byId("reporttable");
+                var oItems = oTable.getItems();
             
+                oItems.forEach(function(oItem) {
+                    var oStatus = oItem.getBindingContext("MainModel").getProperty("STATUS");
+                    var oButton = oItem.getCells()[oItem.getCells().length - 1];
             
-
+                    if (oStatus === "Claim sent back to employee") {
+                        oButton.setEnabled(true);
+                    } else {
+                        oButton.setEnabled(false);
+                    }
+                });
+            },            
+            
             onCustomerPress: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
@@ -1731,23 +1768,15 @@ sap.ui.define([
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-            // ondetailarrow: function(oEvent) {
-            //     var oSelectedItem = oEvent.getSource().getParent();
-            //     var sID = oSelectedItem.getBindingContext("MainModel").getProperty("CLAIM_ID");
-            //     this.getOwnerComponent().getRouter().navTo("claimdetails", {
-            //         ID: sID
-            //     });
-            // }
-
-            // ondetailarrow: function () {
-            //     this.getSplitAppObj().to(this.createId("detail3"));
-            // },
+        
             ondetailarrow: function (oEvent) {
                 var sClaimId = oEvent.getSource().getBindingContext("MainModel").getProperty("CLAIM_ID");
                 this.getClaimDetails(sClaimId);
                 // Navigate to detail3 page
                 this.getSplitAppObj().to(this.createId("detail3"));
             },
+
+          
 
             getClaimDetails: function (sClaimId) {
                 var that = this; // Preserve 'this' reference

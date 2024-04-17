@@ -127,7 +127,7 @@
                                                                 class="label"
                                                                 visible="false"
                                                             />
-                                                             <Label
+                                                            <Label
                                                                 id="claimId"
                                                                 text="Id"
                                                                 class="label"
@@ -653,7 +653,7 @@
                                                     <VBox
                                                         class="details-column"
                                                     >
-                                                    <Label
+                                                        <Label
                                                             text="ID:"
                                                             class="detaillabel"
                                                         />
@@ -710,7 +710,7 @@
                                                     <VBox
                                                         class="details-column"
                                                     >
-                                                    <Text
+                                                        <Text
                                                             text="{localModel>ID}"
                                                             class="detail"
                                                         />
@@ -1102,13 +1102,13 @@
                                                                             class="claimtext"
                                                                             visible="true"
                                                                         />
-                                                                         <!-- <Text
+                                                                        <!-- <Text
                                                                             text="{path: 'localModel>/claimId', formatter: '.formatNumericValue'}"
                                                                             id="idc"
                                                                             class="claimtext"
                                                                             visible="true"
                                                                         /> -->
-                                                                         <!-- <Text
+                                                                        <!-- <Text
                                                                             text="{localModel>/Id}"
                                                                             class="claimtext"
                                                                             id="idc"
@@ -1122,7 +1122,6 @@
                                                                             class="claimtext"
                                                                             id="claimt"
                                                                         />
-                                                                        
 
                                                                         <Text
                                                                             text="{localModel>/claimStartDate}"
@@ -1181,7 +1180,7 @@
                                                                     <VBox
                                                                         class="details-column"
                                                                     >
-                                                                     <Label
+                                                                        <Label
                                                                             text="ID:"
                                                                             class="detaillabel"
                                                                         />
@@ -1193,7 +1192,7 @@
                                                                             text="Doctor's Name:"
                                                                             class="detaillabel"
                                                                         />
-                                                                         <Label
+                                                                        <Label
                                                                             text="Pateint Id:"
                                                                             class="detaillabel"
                                                                         />
@@ -1225,7 +1224,7 @@
                                                                             text="Requested Amount(Rs):"
                                                                             class="detaillabel"
                                                                         />
-                                                                         <Label
+                                                                        <Label
                                                                             text="Review:"
                                                                             class="detaillabel"
                                                                         />
@@ -1233,7 +1232,7 @@
                                                                     <VBox
                                                                         class="details-column"
                                                                     >
-                                                                      <Text
+                                                                        <Text
                                                                             text="{localModel>ID}"
                                                                             class="detailtext"
                                                                             id="idc"
@@ -1248,7 +1247,7 @@
                                                                             class="detailtext"
                                                                             id="hospitald"
                                                                         />
-                                                                         <Text
+                                                                        <Text
                                                                             text="{localModel>PATIENT_ID}"
                                                                             class="detailtext"
                                                                             id="hospitalP"
@@ -1258,7 +1257,7 @@
                                                                             class="detailtext"
                                                                             id="hospitalst"
                                                                         />
-                                                                         <Text
+                                                                        <Text
                                                                             text="{localModel>HOSPITAL_LOCATION}"
                                                                             class="detailtext"
                                                                             id="hospitalLO"
@@ -1477,6 +1476,7 @@
                     alternateRowColors="true"
                     items="{MainModel>/ClaimReports}"
                     sticky="ColumnHeaders"
+                    updateFinished="onTableUpdate"
                 >
                     <headerToolbar>
                         <Toolbar>
@@ -1568,6 +1568,7 @@
                                 <Button
                                     icon="sap-icon://arrow-right"
                                     press="ondetailarrow"
+                                    id="details"
                                 />
                             </cells>
                         </ColumnListItem>
@@ -1612,7 +1613,6 @@
                                         <CustomListItem>
                                             <HBox class="item">
                                                 <VBox class="details-column">
-                                               
                                                     <Label
                                                         text="Claim ID:"
                                                         class="detaillabel"
@@ -1637,7 +1637,7 @@
                                                         text="Treatment For:"
                                                         class="detaillabel"
                                                     />
-                                                     <Label
+                                                    <Label
                                                         text="Treatment Type:"
                                                         class="detaillabel"
                                                     />
@@ -1651,7 +1651,6 @@
                                                     />
                                                 </VBox>
                                                 <VBox class="details-column">
-                                                  
                                                     <Text
                                                         text="{localModel>/dataValue/0/CLAIM_ID}"
                                                         id="IdText"
@@ -1677,7 +1676,7 @@
                                                         text="{localModel>/dataValue/0/TREATMENT_FOR}"
                                                         class="claimdetailtext"
                                                     />
-                                                     <Text
+                                                    <Text
                                                         text="{localModel>/dataValue/0/TREATMENT_TYPE}"
                                                         class="claimdetailtext"
                                                     />
@@ -1703,7 +1702,7 @@
                                         <CustomListItem>
                                             <HBox class="item">
                                                 <VBox class="details-column">
-                                                 <!-- <Label
+                                                    <!-- <Label
                                                         text="ID:"
                                                         class="detaillabel"
                                                     /> -->
@@ -1715,7 +1714,7 @@
                                                         text="Doctor Name:"
                                                         class="detaillabel"
                                                     />
-                                                     <Label
+                                                    <Label
                                                         text="Patient Id:"
                                                         class="detaillabel"
                                                     />
@@ -1757,7 +1756,7 @@
                                                     />
                                                 </VBox>
                                                 <VBox class="details-column">
-                                                  <!-- <Text
+                                                    <!-- <Text
                                                         text="{localModel>ID}"
                                                         id="claimIdText"
                                                         class="claimdetailtext"
@@ -1766,7 +1765,7 @@
                                                         text="{localModel>CONSULTANCY_CATEGORY}"
                                                         class="claimdetailtext"
                                                     />
-                                                     <Text
+                                                    <Text
                                                         text="{localModel>DOCTOR_NAME}"
                                                         class="claimdetailtext"
                                                     />
