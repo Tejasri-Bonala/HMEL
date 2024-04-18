@@ -1,9 +1,10 @@
 
 ###
-PATCH  httpS://aarini-development-development-aarini-med-cap-srv.cfapps.eu10-004.hana.ondemand.com/odata/v4/my/CLAIM_DETAILS/d47e91b5-dd4d-407f-9b85-e5d288a2c855/3
+POST   httpS://aarini-development-development-aarini-med-cap-srv.cfapps.eu10-004.hana.ondemand.com/odata/v4/my/CLAIM_DETAILS
 Content-Type: application/json
 
 {
+  "CLAIM_ID":1,
   "PERSON_NUMBER": 90,
   "CLAIM_TYPE": "(OPD) OUTPATIENT DEPARTMENT",
   "CLAIM_START_DATE": "2024-04-14T18:30:00.000Z",
@@ -24,5 +25,6 @@ Content-Type: application/json
   "BILL_AMOUNT": 5000,
   "DISCOUNT": 0,
   "REVIEW": "",
+  "STATUS":"Submitted",
   "APPROVED_AMOUNT": 0
 }

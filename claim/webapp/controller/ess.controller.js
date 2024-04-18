@@ -1169,8 +1169,10 @@ sap.ui.define([
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
                         CLAIM_TYPE: AD.claimType,
-                        CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
-                        CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+                        // CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
+                         // CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+                        CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
+                        CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
                         TREATMENT_FOR: AD.treatmentFor,
                         TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
                         TREATMENT_TYPE: AD.treatmentType,
@@ -1301,6 +1303,17 @@ sap.ui.define([
                         },
                     });
                 }
+                function formatDateToISO(date) {
+                    let [day, month, year] = date.split("/");
+                            var claimDate = new Date();
+                            claimDate.setFullYear(year);
+                            claimDate.setMonth(parseInt(month) - 1); 
+                            claimDate.setDate(day);
+                           
+                            // Convert the combined date string to ISO format
+                            return claimDate.toISOString();
+                 }
+                
             },
             onTableUpdate: function() {
                 var oTable = this.getView().byId("reporttable");
