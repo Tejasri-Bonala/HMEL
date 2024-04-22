@@ -1212,44 +1212,6 @@ sap.ui.define([
                         handleError(error);
                     });
             
-                // function updateClaimData(claim, id) {
-                //     console.time("Update claim")
-                //     // Set status to "Submitted"
-                //     claim.STATUS = "Submitted";
-                //     return new Promise(function(resolve, reject) {
-                //         $.ajax({
-                //             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
-                //             type: 'PATCH',
-                //             contentType: 'application/json',
-                //             data: JSON.stringify(claim),
-                //             success: function(response) {
-                //                 console.timeEnd('Update claim')
-                //                 resolve();
-                //             },
-                //             error: function(xhr, status, error) {
-                //                 reject(error);
-                //             }
-                //         });
-                //     });
-                // }
-            
-                // function saveClaimData(claim) {
-                //     return new Promise(function(resolve, reject) {
-                //         $.ajax({
-                //             url: '/odata/v4/my/CLAIM_DETAILS',
-                //             type: 'POST',
-                //             contentType: 'application/json',
-                //             data: JSON.stringify(claim),
-                //             success: function(response) {
-                //                 resolve();
-                //             },
-                //             error: function(xhr, status, error) {
-                //                 reject(error);
-                //             }
-                //         });
-                //     });
-                // }
-
                 function updateClaimData(claim, id) {
                     console.time("Update claim");
                     // Set status to "Submitted"
@@ -1268,7 +1230,7 @@ sap.ui.define([
                         }
                     });
                 }
-                
+               
                 function saveClaimData(claim) {
                     return fetch('/odata/v4/my/CLAIM_DETAILS', {
                         method: 'POST',
@@ -1283,8 +1245,8 @@ sap.ui.define([
                         }
                     });
                 }
-                
-            
+
+              
                 function fetchMaxClaimId() {
                     return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
                         .then(response => {
