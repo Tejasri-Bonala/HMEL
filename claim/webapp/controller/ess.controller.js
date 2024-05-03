@@ -66,47 +66,47 @@ sap.ui.define([
                 oRouter.navTo("RouteLogin");
             },
 
-            onTabSelect: function (oEvent) {
-                this.updateButtonVisibility();
+            // onTabSelect: function (oEvent) {
+            //     this.updateButtonVisibility();
 
-                var sSelectedKey = oEvent.getParameter("key");
+            //     var sSelectedKey = oEvent.getParameter("key");
 
-                // Check if moving from "Claim Details" to "Create" tab
-                if (this.sLastSelectedTab === "claimDetails") {
-                    // Validate fields in "Claim Details" tab
+            //     // Check if moving from "Claim Details" to "Create" tab
+            //     if (this.sLastSelectedTab === "claimDetails") {
+            //         // Validate fields in "Claim Details" tab
 
-                    // Save data from the current tab to the localModel
-                    this.saveDataTolocalModel();
-                    var aMissingFields = this.validateRequiredFields("claimDetails");
-                    if (aMissingFields.length > 0) {
-                        // Show an error message with missing required fields
-                        var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
-                        MessageBox.error(sErrorMessage);
-                        // If validation fails, prevent switching to the "Create" tab
-                        this.byId("myIconTabBar").setSelectedKey("claimDetails");
-                        return;
-                    }
-                }
-                else if (this.sLastSelectedTab === "Create") {
-                    var oCheckBoxAccept = this.byId("Accept");
-                    var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
+            //         // Save data from the current tab to the localModel
+            //         this.saveDataTolocalModel();
+            //         var aMissingFields = this.validateRequiredFields("claimDetails");
+            //         if (aMissingFields.length > 0) {
+            //             // Show an error message with missing required fields
+            //             var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
+            //             MessageBox.error(sErrorMessage);
+            //             // If validation fails, prevent switching to the "Create" tab
+            //             this.byId("myIconTabBar").setSelectedKey("claimDetails");
+            //             return;
+            //         }
+            //     }
+            //     else if (this.sLastSelectedTab === "Create") {
+            //         var oCheckBoxAccept = this.byId("Accept");
+            //         var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
 
-                    if (!bIsCheckBoxChecked) {
-                        // CheckBox is not checked, show an error message
-                        MessageBox.error("Please acknowledge and accept the terms and conditions.");
-                        this.byId("myIconTabBar").setSelectedKey("Create");
-                        return;
-                    }
-                }
+            //         if (!bIsCheckBoxChecked) {
+            //             // CheckBox is not checked, show an error message
+            //             MessageBox.error("Please acknowledge and accept the terms and conditions.");
+            //             this.byId("myIconTabBar").setSelectedKey("Create");
+            //             return;
+            //         }
+            //     }
 
-                // Continue with the normal logic for other tabs
-                this.sLastSelectedTab = sSelectedKey;
+            //     // Continue with the normal logic for other tabs
+            //     this.sLastSelectedTab = sSelectedKey;
 
-                // Your existing logic for the selected tab
-                if (sSelectedKey === "review") {
-                    this.updateTotalRequestedAmount();
-                }
-            },
+            //     // Your existing logic for the selected tab
+            //     if (sSelectedKey === "review") {
+            //         this.updateTotalRequestedAmount();
+            //     }
+            // },
 
             validateAndSwitchTab: function (currentTab, nextTab) {
                 var aMissingFields = this.validateRequiredFields(currentTab);
@@ -1161,6 +1161,7 @@ sap.ui.define([
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
                 var allDetails = AD.dataValue;
+                var id = AD.dataValue[0].ID;
                 var currentDate = new Date().toISOString().split('T')[0];
                 var promises = [];
             
@@ -1290,6 +1291,7 @@ sap.ui.define([
                     return claimDate.toISOString();
                 }
             },
+
             
             onTableUpdate: function() {
                 var oTable = this.getView().byId("reporttable");
@@ -1751,6 +1753,131 @@ sap.ui.define([
                     }
                 }
             },
+            onCreate: function () {
+                var oView = this.getView();
+                var oDialog = oView.byId("create");
+            
+                // If the dialog doesn't exist, create it
+                if (!oDialog) {
+                    // Load the fragment
+                    oDialog = sap.ui.xmlfragment(oView.getId(), "claim.fragments.create", this);
+                    oView.addDependent(oDialog);
+                }
+            
+                // Open the dialog
+                oDialog.open();
+            },
+
+            onClosecreate: function () {
+                var oView = this.getView();
+                var oDialog = oView.byId("create");
+                oView.byId("folder").setValue("");
+                if (oDialog) {
+                    oDialog.close();
+                }
+            },
+            // onSavecreate: function () {
+            //     var oView = this.getView();
+            //     var oDialog = oView.byId("create");
+               
+            
+            //     // Get folder name input
+            //     var sFolder = oView.byId("folder").getValue();
+            
+            //     // Check if the folder exists
+            //     fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')")
+            //         .then(function (response) {
+            //             return response.json();
+            //         })
+            //         .then(function (data) {
+            //             if (data.exists) {
+            //                 // If folder exists, show error message
+            //                 sap.m.MessageBox.error("Folder already exists");
+            //             } 
+            //             else {
+            //                 // If folder does not exist, create the folder
+            //                 fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
+            //                     method: "POST",
+            //                     headers: {
+            //                         "Content-Type": "application/json"
+            //                     },
+            //                     body: JSON.stringify({ folderName: sFolder })
+            //                 })
+            //                     .then(function (response) {
+            //                         if (response.ok) {
+            //                             // If folder creation is successful, show success message and close dialog
+            //                             sap.m.MessageBox.success("Folder created successfully", {
+            //                                 onClose: function () {
+            //                                     oDialog.close();
+            //                                     location.reload();
+            //                                     // Navigate back to detail2
+            //                                     var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+            //                                     oRouter.navTo("detail2");
+            //                                 }
+            //                             });
+            //                         }
+            //                          else {
+            //                             // If folder creation fails, show error message
+            //                             sap.m.MessageBox.error("Failed to create folder");
+            //                         }
+            //                     })
+            //                     .catch(function (error) {
+            //                         // Handle error during folder creation
+            //                         console.error('Error occurred during folder creation:', error);
+            //                         sap.m.MessageBox.error("Failed to create folder");
+            //                     });
+            //             }
+            //         })
+            //         .catch(function (error) {
+            //             // Handle error when checking folder existence
+            //             console.error('Error occurred during folder existence check:', error);
+            //             sap.m.MessageBox.error("Failed to check folder existence");
+            //         });
+            // },
+            onSavecreate: function () {
+                var oView = this.getView();
+                var oDialog = oView.byId("create");
+            
+                // Get folder name input
+                var sFolder = oView.byId("folder").getValue();
+            
+                // Check if the folder exists
+                fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify()
+                })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.error) {
+                        // If an error occurs, show error message
+                        sap.m.MessageBox.error("Failed to create folder");
+                    } 
+                    else {
+                        // If folder creation is successful, show success message and close dialog
+                        sap.m.MessageBox.success("Folder created successfully", {
+                            onClose: function () {
+                                oDialog.close();
+                                location.reload(); // Reloading the page is not a good practice, but for your case, it seems you want to refresh
+                                // Navigate back to detail2
+                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                oRouter.navTo("detail2");
+                            }
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    // Handle error
+                    console.error('Error occurred during folder creation:', error);
+                    sap.m.MessageBox.error("Failed to create folder");
+                });
+            },
+            
+            
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
                 this._fileUploadFragment = null;

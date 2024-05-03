@@ -786,7 +786,7 @@
                                         hiddenInPopin="None"
                                         items="{path: '/items', templateShareable: false}"
                                         maxFileNameLength="60"
-                                        uploadUrl="/CLAIM_DETAILS"
+                                        uploadUrl="/MEDICAL CLAIM"
                                         multiple="true"
                                         beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
                                         beforeUploadStarts="onBeforeUploadStarts"
@@ -815,6 +815,12 @@
                                                 <ToolbarSeparator />
                                                 <upload:ActionsPlaceholder
                                                     placeholderFor="UploadButtonPlaceholder"
+                                                />
+                                                <Button
+                                                    id="Create"
+                                                    text="Create"
+                                                    enabled="true"
+                                                    press="onCreate"
                                                 />
                                                 <Button
                                                     id="downloadSelectedButton"
