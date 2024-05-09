@@ -1971,7 +1971,7 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to create folder");
                 });
             },            
-            
+             
             
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
