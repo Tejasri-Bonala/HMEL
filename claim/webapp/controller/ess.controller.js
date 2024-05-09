@@ -1706,6 +1706,10 @@ sap.ui.define([
                 // this.oMockServer.restore();
             },
 
+            getIconSrc: function(mediaType, thumbnailUrl) {
+                return UploadSetwithTable.getIconForFileType(mediaType, thumbnailUrl);
+            },
+
             getFileCategories: function () {
                 return [
                     { categoryId: "Test Report", categoryText: "Test Report" },
@@ -1713,15 +1717,16 @@ sap.ui.define([
                     { categoryId: "Original Bill", categoryText: "Original Bill" },
                 ];
             },
-            openFileUploadDialog: function () {
+            //open fragment
+            openFileUploadDialog: function() {
                 var items = this.oItemsProcessor;
-
+    
                 if (items && items.length) {
-
+    
                     this._oFilesTobeuploaded = items;
-
-                    var oItemsMap = this._oFilesTobeuploaded.map(function (oItemProcessor) {
-
+    
+                    var oItemsMap = this._oFilesTobeuploaded.map(function(oItemProcessor) {
+    
                         return {
                             fileName: oItemProcessor.item.getFileName(),
                             fileCategorySelected: this.documentTypes[0].categoryId,
@@ -1733,15 +1738,15 @@ sap.ui.define([
                     var oModel = new JSONModel({
                         "selectedItems": oItemsMap,
                         "types": this.documentTypes
-
+    
                     });
                     if (!this._fileUploadFragment) {
                         Fragment.load({
-                            name: "hmel.claims.hmelclaim.fragments.fileupload",
+                            name: "claim.fragments.FileUpload",
                             id: this.getView().getId() + "-file-upload-dialog",
                             controller: this
                         })
-                            .then(function (oPopover) {
+                            .then(function(oPopover) {
                                 this._fileUploadFragment = oPopover;
                                 this.getView().addDependent(oPopover);
                                 oPopover.setModel(oModel);
@@ -1751,6 +1756,105 @@ sap.ui.define([
                         this._fileUploadFragment.setModel(oModel);
                         this._fileUploadFragment.open();
                     }
+                }
+            },
+            closeFileUplaodFragment: function() {
+                this._fileUploadFragment.destroy();
+                this._fileUploadFragment = null;
+                this._oFilesTobeuploaded = [];
+                this.oItemsProcessor = [];
+            },
+            onSelectionChange: function(oEvent) {
+                var oTable = oEvent.getSource();
+                var aSelectedItems = oTable.getSelectedItems();
+                var oDownloadBtn = this.byId("downloadSelectedButton");
+                var oEditUrlBtn = this.byId("editUrlButton");
+                var oRenameBtn = this.byId("renameButton");
+                var oRemoveDocumentBtn = this.byId("removeDocumentButton");
+    
+                if (aSelectedItems.length > 0) {
+                    oDownloadBtn.setEnabled(true);
+                } else {
+                    oDownloadBtn.setEnabled(false);
+                }
+                if (aSelectedItems.length === 1){
+                    oEditUrlBtn.setEnabled(true);
+                    oRenameBtn.setEnabled(true);
+                    oRemoveDocumentBtn.setEnabled(true);
+                } else {
+                    oRenameBtn.setEnabled(false);
+                    oEditUrlBtn.setEnabled(false);
+                    oRemoveDocumentBtn.setEnabled(false);
+                }
+            },
+            // Download files handler
+            onDownloadFiles: function(oEvent) {
+                var oUploadSet = this.byId("UploadSetTable");
+                const oItems = oUploadSet.getSelectedItems();
+    
+                oItems.forEach((oItem) => {oItem.download(true);});
+            },
+            handleConfirmation: function() {
+                var oData = this._fileUploadFragment.getModel().getData();
+                var oSelectedItems = oData.selectedItems;
+    
+                if (oSelectedItems && oSelectedItems.length) {
+                    oSelectedItems.forEach(function(oItem) {
+                        var oItemToUploadRef = oItem.itemInstance;
+                        // setting the header field for custom document type selected
+                        oItemToUploadRef.addHeaderField(new CoreItem({
+                            key: "documentType",
+                            text: oItem.fileCategorySelected
+                        }));
+                        oItem.fnResolve(oItemToUploadRef);
+                    });
+                }
+                this._fileUploadFragment.destroy();
+                this._fileUploadFragment = null;
+                this._oFilesTobeuploaded = [];
+                this.oItemsProcessor = [];
+            },
+            uploadFilesHandler: function() {
+                var oUploadSetTableInstance = this.byId("UploadSetTable");
+    
+                oUploadSetTableInstance.fileSelectionHandler();
+            },
+            itemValidationCallback: function(oItemInfo) {
+                const {oItem, iTotalItemsForUpload} = oItemInfo;
+                var oUploadSetTableInstance = this.byId("UploadSetTable");
+                var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
+                var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
+                if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-" && iTotalItemsForUpload === 1) {
+                    return new Promise((resolve) => {
+                        if (oSelectedItemForUpdate) {
+                            var oContext = oSelectedItemForUpdate.getBindingContext();
+                            var data = oContext && oContext.getObject ? oContext.getObject() : {};
+    
+                            /* Demonstration use case of Setting the header field if required to be passed in API request headers to
+                               inform backend with document type captured through user input */
+                            oItem.addHeaderField(new CoreItem(
+                                {
+                                    key: "existingDocumentID",
+                                    text: data ? data.id : ""
+                                }
+                            ));
+                        }
+                        resolve(oItem);
+                    });
+                } else {
+                    var oItemPromise = new Promise((resolve, reject) => {
+                        this.oItemsProcessor.push({
+                            item: oItem,
+                            resolve: resolve,
+                            reject: reject
+                        });
+                    });
+                    if (iTotalItemsForUpload === 1) {
+                        this.openFileUploadDialog();
+                    } else if (iTotalItemsForUpload === this.oItemsProcessor.length) {
+                        this.openFileUploadDialog();
+                    }
+                    return oItemPromise;
                 }
             },
             onCreate: function () {
@@ -1776,64 +1880,50 @@ sap.ui.define([
                     oDialog.close();
                 }
             },
+        
             // onSavecreate: function () {
             //     var oView = this.getView();
             //     var oDialog = oView.byId("create");
-               
             
             //     // Get folder name input
             //     var sFolder = oView.byId("folder").getValue();
             
             //     // Check if the folder exists
-            //     fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')")
-            //         .then(function (response) {
-            //             return response.json();
-            //         })
-            //         .then(function (data) {
-            //             if (data.exists) {
-            //                 // If folder exists, show error message
-            //                 sap.m.MessageBox.error("Folder already exists");
-            //             } 
-            //             else {
-            //                 // If folder does not exist, create the folder
-            //                 fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
-            //                     method: "POST",
-            //                     headers: {
-            //                         "Content-Type": "application/json"
-            //                     },
-            //                     body: JSON.stringify({ folderName: sFolder })
-            //                 })
-            //                     .then(function (response) {
-            //                         if (response.ok) {
-            //                             // If folder creation is successful, show success message and close dialog
-            //                             sap.m.MessageBox.success("Folder created successfully", {
-            //                                 onClose: function () {
-            //                                     oDialog.close();
-            //                                     location.reload();
-            //                                     // Navigate back to detail2
-            //                                     var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-            //                                     oRouter.navTo("detail2");
-            //                                 }
-            //                             });
-            //                         }
-            //                          else {
-            //                             // If folder creation fails, show error message
-            //                             sap.m.MessageBox.error("Failed to create folder");
-            //                         }
-            //                     })
-            //                     .catch(function (error) {
-            //                         // Handle error during folder creation
-            //                         console.error('Error occurred during folder creation:', error);
-            //                         sap.m.MessageBox.error("Failed to create folder");
-            //                     });
-            //             }
-            //         })
-            //         .catch(function (error) {
-            //             // Handle error when checking folder existence
-            //             console.error('Error occurred during folder existence check:', error);
-            //             sap.m.MessageBox.error("Failed to check folder existence");
-            //         });
+            //     fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
+            //         method: "GET",
+            //         headers: {
+            //             "Content-Type": "application/json"
+            //         },
+            //         body: JSON.stringify()
+            //     })
+            //     .then(function (response) {
+            //         return response.json();
+            //     })
+            //     .then(function (data) {
+            //         if (data.error) {
+            //             // If an error occurs, show error message
+            //             sap.m.MessageBox.error("Failed to create folder");
+            //         } 
+            //         else {
+            //             // If folder creation is successful, show success message and close dialog
+            //             sap.m.MessageBox.success("Folder created successfully", {
+            //                 onClose: function () {
+            //                     oDialog.close();
+            //                     location.reload(); 
+            //                     // Navigate back to detail2
+            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+            //                     oRouter.navTo("detail2");
+            //                 }
+            //             });
+            //         }
+            //     })
+            //     .catch(function (error) {
+            //         // Handle error
+            //         console.error('Error occurred during folder creation:', error);
+            //         sap.m.MessageBox.error("Failed to create folder");
+            //     });
             // },
+
             onSavecreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
@@ -1853,21 +1943,26 @@ sap.ui.define([
                     return response.json();
                 })
                 .then(function (data) {
-                    if (data.error) {
-                        // If an error occurs, show error message
+                    if (data.value.success) {
+                        // If folder creation is successful
+                        if (data.value.folderExists) {
+                            // Folder already exists, show message
+                            sap.m.MessageBox.information("Folder already exists");
+                        } else {
+                            // Folder created successfully, show success message and close dialog
+                            sap.m.MessageBox.success("Folder created successfully", {
+                                onClose: function () {
+                                    oDialog.close();
+                                    location.reload(); 
+                                    // Navigate back to detail2
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                    oRouter.navTo("detail2");
+                                }
+                            });
+                        }
+                    } else {
+                        // Unexpected response, show error message
                         sap.m.MessageBox.error("Failed to create folder");
-                    } 
-                    else {
-                        // If folder creation is successful, show success message and close dialog
-                        sap.m.MessageBox.success("Folder created successfully", {
-                            onClose: function () {
-                                oDialog.close();
-                                location.reload(); // Reloading the page is not a good practice, but for your case, it seems you want to refresh
-                                // Navigate back to detail2
-                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                oRouter.navTo("detail2");
-                            }
-                        });
                     }
                 })
                 .catch(function (error) {
@@ -1875,7 +1970,7 @@ sap.ui.define([
                     console.error('Error occurred during folder creation:', error);
                     sap.m.MessageBox.error("Failed to create folder");
                 });
-            },
+            },            
             
             
             closeFileUplaodFragment: function () {
