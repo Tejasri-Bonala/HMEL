@@ -1009,7 +1009,7 @@ sap.ui.define([
             validateOnlyCharacters: function (oEvent) {
                 var input = oEvent.getSource();
                 var value = input.getValue().trim();
-                var pattern = /^[A-Za-z\s]*$/; 
+                var pattern = /^[A-Za-z\s]*$/;
                 var isValid = pattern.test(value);
                 input.setValueState(isValid ? "None" : "Error");
                 input.setValueStateText(isValid ? "" : "Only characters are allowed");
@@ -1047,7 +1047,7 @@ sap.ui.define([
             //     var id = AD.dataValue[0].ID;
             //     console.log(id);
             //     var currentDate = new Date().toISOString().split('T')[0];
-                
+
             //     allDetails.forEach(function(detail) {
             //         var claim = {
             //             // ID:parseInt(detail.ID),
@@ -1074,7 +1074,7 @@ sap.ui.define([
             //             REVIEW: detail.REVIEW,
             //             APPROVED_AMOUNT: 0
             //         };
-                    
+
             //         if (!isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined') {
             //             updateClaimData(claim, id);
             //         } else {
@@ -1089,7 +1089,7 @@ sap.ui.define([
             //         }
 
             //     });
-                
+
             //     function updateClaimData(claim, id) {
             //         $.ajax({
             //             url: '/odata/v4/my/CLAIM_DETAILS/' + id,
@@ -1104,7 +1104,7 @@ sap.ui.define([
             //             }
             //         });
             //     }
-                
+
             //     function saveClaimData(claim) {
             //         $.ajax({
             //             url: '/odata/v4/my/CLAIM_DETAILS',
@@ -1119,7 +1119,7 @@ sap.ui.define([
             //             }
             //         });
             //     }
-                
+
             //     function fetchMaxClaimId() {
             //         return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
             //             .then(response => {
@@ -1132,7 +1132,7 @@ sap.ui.define([
             //                 return data.value[0].CLAIM_ID;
             //             });
             //     }
-                
+
             //     function showMessageAndNavigate(message) {
             //         sap.m.MessageBox.success(message, {
             //             onClose: function() {
@@ -1142,7 +1142,7 @@ sap.ui.define([
             //             },
             //         });
             //     }
-                
+
             //     function handleError(xhr, status, error) {
             //         var errorMessage = "Error: " + error;
             //         if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message) {
@@ -1156,7 +1156,7 @@ sap.ui.define([
             //     }
             // },
 
-            handleSubmit: function() {
+            handleSubmit: function () {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
@@ -1164,8 +1164,8 @@ sap.ui.define([
                 var id = AD.dataValue[0].ID;
                 var currentDate = new Date().toISOString().split('T')[0];
                 var promises = [];
-            
-                allDetails.forEach(function(detail) {
+
+                allDetails.forEach(function (detail) {
                     var claim = {
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
@@ -1173,7 +1173,7 @@ sap.ui.define([
                         // CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
                         // CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
                         CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
-                   CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+                        CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
                         TREATMENT_FOR: AD.treatmentFor,
                         TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
                         TREATMENT_TYPE: AD.treatmentType,
@@ -1190,31 +1190,32 @@ sap.ui.define([
                         BILL_AMOUNT: parseFloat(detail.BILL_AMOUNT),
                         DISCOUNT: parseFloat(detail.DISCOUNT),
                         REVIEW: detail.REVIEW,
-                        APPROVED_AMOUNT: 0
+                        APPROVED_AMOUNT: 0,
+
                     };
-            
+
                     var promise = !isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined' ?
                         updateClaimData(claim, detail.ID) :
                         fetchMaxClaimId()
-                        .then(maxClaimId => {
-                            claim.CLAIM_ID = maxClaimId + 1;
-                            return saveClaimData(claim);
-                        })
-                        .catch(error => {
-                            throw error; // Propagate the error
-                        });
-            
+                            .then(maxClaimId => {
+                                claim.CLAIM_ID = maxClaimId + 1;
+                                return saveClaimData(claim);
+                            })
+                            .catch(error => {
+                                throw error; // Propagate the error
+                            });
+
                     promises.push(promise);
                 });
-            
+
                 Promise.all(promises)
-                    .then(function() {
+                    .then(function () {
                         showMessageAndNavigate("Claim updated or saved successfully!");
                     })
-                    .catch(function(error) {
+                    .catch(function (error) {
                         handleError(error);
                     });
-            
+
                 function updateClaimData(claim, id) {
                     console.time("Update claim");
                     // Set status to "Submitted"
@@ -1226,14 +1227,24 @@ sap.ui.define([
                         },
                         body: JSON.stringify(claim)
                     })
-                    .then(response => {
-                        console.timeEnd('Update claim');
-                        if (!response.ok) {
-                            throw new Error('Failed to update claim data');
-                        }
-                    });
+                        .then(response => {
+                            console.timeEnd('Update claim');
+                            if (!response.ok) {
+                                throw new Error('Failed to update claim data');
+                            }
+                            // Update status in local model as well if needed
+                            var localModel = that.getView().getModel("localModel");
+                            var AD = localModel.getData();
+                            var allDetails = AD.dataValue;
+                            allDetails.forEach(detail => {
+                                if (detail.ID === id) {
+                                    detail.STATUS = "Submitted";
+                                }
+                            });
+                            localModel.setData(AD);
+                        });
                 }
-               
+
                 function saveClaimData(claim) {
                     return fetch('/odata/v4/my/CLAIM_DETAILS', {
                         method: 'POST',
@@ -1242,14 +1253,14 @@ sap.ui.define([
                         },
                         body: JSON.stringify(claim)
                     })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to save claim data');
-                        }
-                    });
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to save claim data');
+                            }
+                        });
                 }
 
-              
+
                 function fetchMaxClaimId() {
                     return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
                         .then(response => {
@@ -1262,55 +1273,55 @@ sap.ui.define([
                             return data.value[0].CLAIM_ID;
                         });
                 }
-            
+
                 function showMessageAndNavigate(message) {
                     sap.m.MessageBox.success(message, {
-                        onClose: function() {
+                        onClose: function () {
                             var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
                             oRouter.navTo("Login");
                             window.location.reload();
                         },
                     });
                 }
-            
+
                 function handleError(error) {
                     var errorMessage = "Error: " + error;
                     sap.m.MessageBox.error(errorMessage, {
-                        onClose: function() {
+                        onClose: function () {
                             // Handle error closing if needed
                         },
                     });
                 }
-            
+
                 // function formatDateToISO(date) {
                 //     let [day, month, year] = date.split("/");
                 //     var claimDate = new Date();
                 //     claimDate.setFullYear(year);
                 //     claimDate.setMonth(parseInt(month) - 1);
                 //     claimDate.setDate(day);
-            
+
                 //     // Convert the combined date string to ISO format
                 //     return claimDate.toISOString();
                 // }
             },
 
-            
-            onTableUpdate: function() {
+
+            onTableUpdate: function () {
                 var oTable = this.getView().byId("reporttable");
                 var oItems = oTable.getItems();
-            
-                oItems.forEach(function(oItem) {
+
+                oItems.forEach(function (oItem) {
                     var oStatus = oItem.getBindingContext("MainModel").getProperty("STATUS");
                     var oButton = oItem.getCells()[oItem.getCells().length - 1];
-            
+
                     if (oStatus === "Claim sent back to employee") {
                         oButton.setEnabled(true);
                     } else {
                         oButton.setEnabled(false);
                     }
                 });
-            },            
-            
+            },
+
             onCustomerPress: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var sClaimId = oButton.getBindingContext("MainModel").getProperty("CLAIM_ID");
@@ -1708,7 +1719,7 @@ sap.ui.define([
                 // this.oMockServer.restore();
             },
 
-            getIconSrc: function(mediaType, thumbnailUrl) {
+            getIconSrc: function (mediaType, thumbnailUrl) {
                 return UploadSetwithTable.getIconForFileType(mediaType, thumbnailUrl);
             },
 
@@ -1720,15 +1731,15 @@ sap.ui.define([
                 ];
             },
             //open fragment
-            openFileUploadDialog: function() {
+            openFileUploadDialog: function () {
                 var items = this.oItemsProcessor;
-    
+
                 if (items && items.length) {
-    
+
                     this._oFilesTobeuploaded = items;
-    
-                    var oItemsMap = this._oFilesTobeuploaded.map(function(oItemProcessor) {
-    
+
+                    var oItemsMap = this._oFilesTobeuploaded.map(function (oItemProcessor) {
+
                         return {
                             fileName: oItemProcessor.item.getFileName(),
                             fileCategorySelected: this.documentTypes[0].categoryId,
@@ -1740,7 +1751,7 @@ sap.ui.define([
                     var oModel = new JSONModel({
                         "selectedItems": oItemsMap,
                         "types": this.documentTypes
-    
+
                     });
                     if (!this._fileUploadFragment) {
                         Fragment.load({
@@ -1748,7 +1759,7 @@ sap.ui.define([
                             id: this.getView().getId() + "-file-upload-dialog",
                             controller: this
                         })
-                            .then(function(oPopover) {
+                            .then(function (oPopover) {
                                 this._fileUploadFragment = oPopover;
                                 this.getView().addDependent(oPopover);
                                 oPopover.setModel(oModel);
@@ -1760,26 +1771,26 @@ sap.ui.define([
                     }
                 }
             },
-            closeFileUplaodFragment: function() {
+            closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
                 this._fileUploadFragment = null;
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-            onSelectionChange: function(oEvent) {
+            onSelectionChange: function (oEvent) {
                 var oTable = oEvent.getSource();
                 var aSelectedItems = oTable.getSelectedItems();
                 var oDownloadBtn = this.byId("downloadSelectedButton");
                 var oEditUrlBtn = this.byId("editUrlButton");
                 var oRenameBtn = this.byId("renameButton");
                 var oRemoveDocumentBtn = this.byId("removeDocumentButton");
-    
+
                 if (aSelectedItems.length > 0) {
                     oDownloadBtn.setEnabled(true);
                 } else {
                     oDownloadBtn.setEnabled(false);
                 }
-                if (aSelectedItems.length === 1){
+                if (aSelectedItems.length === 1) {
                     oEditUrlBtn.setEnabled(true);
                     oRenameBtn.setEnabled(true);
                     oRemoveDocumentBtn.setEnabled(true);
@@ -1790,18 +1801,18 @@ sap.ui.define([
                 }
             },
             // Download files handler
-            onDownloadFiles: function(oEvent) {
+            onDownloadFiles: function (oEvent) {
                 var oUploadSet = this.byId("UploadSetTable");
                 const oItems = oUploadSet.getSelectedItems();
-    
-                oItems.forEach((oItem) => {oItem.download(true);});
+
+                oItems.forEach((oItem) => { oItem.download(true); });
             },
-            handleConfirmation: function() {
+            handleConfirmation: function () {
                 var oData = this._fileUploadFragment.getModel().getData();
                 var oSelectedItems = oData.selectedItems;
-    
+
                 if (oSelectedItems && oSelectedItems.length) {
-                    oSelectedItems.forEach(function(oItem) {
+                    oSelectedItems.forEach(function (oItem) {
                         var oItemToUploadRef = oItem.itemInstance;
                         // setting the header field for custom document type selected
                         oItemToUploadRef.addHeaderField(new CoreItem({
@@ -1816,13 +1827,13 @@ sap.ui.define([
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-            uploadFilesHandler: function() {
+            uploadFilesHandler: function () {
                 var oUploadSetTableInstance = this.byId("UploadSetTable");
-    
+
                 oUploadSetTableInstance.fileSelectionHandler();
             },
-            itemValidationCallback: function(oItemInfo) {
-                const {oItem, iTotalItemsForUpload} = oItemInfo;
+            itemValidationCallback: function (oItemInfo) {
+                const { oItem, iTotalItemsForUpload } = oItemInfo;
                 var oUploadSetTableInstance = this.byId("UploadSetTable");
                 var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
                 var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
@@ -1831,7 +1842,7 @@ sap.ui.define([
                         if (oSelectedItemForUpdate) {
                             var oContext = oSelectedItemForUpdate.getBindingContext();
                             var data = oContext && oContext.getObject ? oContext.getObject() : {};
-    
+
                             /* Demonstration use case of Setting the header field if required to be passed in API request headers to
                                inform backend with document type captured through user input */
                             oItem.addHeaderField(new CoreItem(
@@ -1862,14 +1873,14 @@ sap.ui.define([
             onCreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
-            
+
                 // If the dialog doesn't exist, create it
                 if (!oDialog) {
                     // Load the fragment
                     oDialog = sap.ui.xmlfragment(oView.getId(), "claim.fragments.create", this);
                     oView.addDependent(oDialog);
                 }
-            
+
                 // Open the dialog
                 oDialog.open();
             },
@@ -1882,14 +1893,14 @@ sap.ui.define([
                     oDialog.close();
                 }
             },
-        
+
             // onSavecreate: function () {
             //     var oView = this.getView();
             //     var oDialog = oView.byId("create");
-            
+
             //     // Get folder name input
             //     var sFolder = oView.byId("folder").getValue();
-            
+
             //     // Check if the folder exists
             //     fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
             //         method: "GET",
@@ -1925,15 +1936,15 @@ sap.ui.define([
             //         sap.m.MessageBox.error("Failed to create folder");
             //     });
             // },
-           
-             
+
+
             onSavecreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
-                
+
                 // Get folder name input
                 var sFolder = oView.byId("folder").getValue();
-                
+
                 // Check if the folder exists
                 fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
                     method: "GET", // Use POST to create folder
@@ -1942,49 +1953,49 @@ sap.ui.define([
                     },
                     body: JSON.stringify() // Send folderName in the request body
                 })
-                .then(function (response) {
-                    if (!response.ok) {
-                        throw new Error('Failed to create folder');
-                    }
-                    return response.json();
-                })
-                .then(function (data) {
-                    if (data.value.error) {
-                        // Error occurred during folder creation
-                        sap.m.MessageBox.error("Failed to create folder: " + data.value.error);
-                    } else if (data.value.folderExists) {
-                        // Folder already exists, show message
-                        sap.m.MessageBox.information("Folder already exists");
-                    } else if (data.success) {
-                        // Folder created successfully, show success message and close dialog
-                        sap.m.MessageBox.success("Folder created successfully", {
-                            onClose: function () {
-                                oDialog.close();
-                                location.reload(); 
-                                // Navigate back to detail2
-                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                oRouter.navTo("detail2");
-                            }
-                        });
-                    } else {
-                        // Unexpected response
-                        sap.m.MessageBox.error("Failed to create folder: Unexpected response");
-                    }
-                })
-                .catch(function (error) {
-                    // Handle error
-                    console.error('Error occurred during folder creation:', error);
-                    sap.m.MessageBox.error("Failed to create folder");
-                });
-            },            
-            
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Failed to create folder');
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.value.error) {
+                            // Error occurred during folder creation
+                            sap.m.MessageBox.error("Failed to create folder: " + data.value.error);
+                        } else if (data.value.folderExists) {
+                            // Folder already exists, show message
+                            sap.m.MessageBox.information("Folder already exists");
+                        } else if (data.success) {
+                            // Folder created successfully, show success message and close dialog
+                            sap.m.MessageBox.success("Folder created successfully", {
+                                onClose: function () {
+                                    oDialog.close();
+                                    location.reload();
+                                    // Navigate back to detail2
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                    oRouter.navTo("detail2");
+                                }
+                            });
+                        } else {
+                            // Unexpected response
+                            sap.m.MessageBox.error("Failed to create folder: Unexpected response");
+                        }
+                    })
+                    .catch(function (error) {
+                        // Handle error
+                        console.error('Error occurred during folder creation:', error);
+                        sap.m.MessageBox.error("Failed to create folder");
+                    });
+            },
+
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
                 this._fileUploadFragment = null;
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-        
+
             ondetailarrow: function (oEvent) {
                 var sClaimId = oEvent.getSource().getBindingContext("MainModel").getProperty("CLAIM_ID");
                 this.getClaimDetails(sClaimId);
@@ -1992,7 +2003,7 @@ sap.ui.define([
                 this.getSplitAppObj().to(this.createId("detail3"));
             },
 
-          
+
 
             getClaimDetails: function (sClaimId) {
                 var that = this; // Preserve 'this' reference
