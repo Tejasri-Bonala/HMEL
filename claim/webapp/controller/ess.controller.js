@@ -1009,7 +1009,7 @@ sap.ui.define([
             validateOnlyCharacters: function (oEvent) {
                 var input = oEvent.getSource();
                 var value = input.getValue().trim();
-                var pattern = /^[A-Za-z\s]*$/; // Regular expression to match only characters and whitespace
+                var pattern = /^[A-Za-z\s]*$/; 
                 var isValid = pattern.test(value);
                 input.setValueState(isValid ? "None" : "Error");
                 input.setValueStateText(isValid ? "" : "Only characters are allowed");
@@ -1170,8 +1170,10 @@ sap.ui.define([
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
                         CLAIM_TYPE: AD.claimType,
-                        CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
-                        CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
+                        // CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
+                        // CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
+                        CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
+                   CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
                         TREATMENT_FOR: AD.treatmentFor,
                         TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
                         TREATMENT_TYPE: AD.treatmentType,
@@ -1280,16 +1282,16 @@ sap.ui.define([
                     });
                 }
             
-                function formatDateToISO(date) {
-                    let [day, month, year] = date.split("/");
-                    var claimDate = new Date();
-                    claimDate.setFullYear(year);
-                    claimDate.setMonth(parseInt(month) - 1);
-                    claimDate.setDate(day);
+                // function formatDateToISO(date) {
+                //     let [day, month, year] = date.split("/");
+                //     var claimDate = new Date();
+                //     claimDate.setFullYear(year);
+                //     claimDate.setMonth(parseInt(month) - 1);
+                //     claimDate.setDate(day);
             
-                    // Convert the combined date string to ISO format
-                    return claimDate.toISOString();
-                }
+                //     // Convert the combined date string to ISO format
+                //     return claimDate.toISOString();
+                // }
             },
 
             
@@ -1923,46 +1925,50 @@ sap.ui.define([
             //         sap.m.MessageBox.error("Failed to create folder");
             //     });
             // },
-
+           
+             
             onSavecreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
-            
+                
                 // Get folder name input
                 var sFolder = oView.byId("folder").getValue();
-            
+                
                 // Check if the folder exists
                 fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
-                    method: "GET",
+                    method: "GET", // Use POST to create folder
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify()
+                    body: JSON.stringify() // Send folderName in the request body
                 })
                 .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to create folder');
+                    }
                     return response.json();
                 })
                 .then(function (data) {
-                    if (data.value.success) {
-                        // If folder creation is successful
-                        if (data.value.folderExists) {
-                            // Folder already exists, show message
-                            sap.m.MessageBox.information("Folder already exists");
-                        } else {
-                            // Folder created successfully, show success message and close dialog
-                            sap.m.MessageBox.success("Folder created successfully", {
-                                onClose: function () {
-                                    oDialog.close();
-                                    location.reload(); 
-                                    // Navigate back to detail2
-                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                    oRouter.navTo("detail2");
-                                }
-                            });
-                        }
+                    if (data.value.error) {
+                        // Error occurred during folder creation
+                        sap.m.MessageBox.error("Failed to create folder: " + data.value.error);
+                    } else if (data.value.folderExists) {
+                        // Folder already exists, show message
+                        sap.m.MessageBox.information("Folder already exists");
+                    } else if (data.success) {
+                        // Folder created successfully, show success message and close dialog
+                        sap.m.MessageBox.success("Folder created successfully", {
+                            onClose: function () {
+                                oDialog.close();
+                                location.reload(); 
+                                // Navigate back to detail2
+                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                oRouter.navTo("detail2");
+                            }
+                        });
                     } else {
-                        // Unexpected response, show error message
-                        sap.m.MessageBox.error("Failed to create folder");
+                        // Unexpected response
+                        sap.m.MessageBox.error("Failed to create folder: Unexpected response");
                     }
                 })
                 .catch(function (error) {
@@ -1971,7 +1977,6 @@ sap.ui.define([
                     sap.m.MessageBox.error("Failed to create folder");
                 });
             },            
-             
             
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
