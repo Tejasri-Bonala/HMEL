@@ -1894,101 +1894,50 @@ sap.ui.define([
                 }
             },
 
-            // onSavecreate: function () {
-            //     var oView = this.getView();
-            //     var oDialog = oView.byId("create");
-
-            //     // Get folder name input
-            //     var sFolder = oView.byId("folder").getValue();
-
-            //     // Check if the folder exists
-            //     fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
-            //         method: "GET",
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         body: JSON.stringify()
-            //     })
-            //     .then(function (response) {
-            //         return response.json();
-            //     })
-            //     .then(function (data) {
-            //         if (data.error) {
-            //             // If an error occurs, show error message
-            //             sap.m.MessageBox.error("Failed to create folder");
-            //         } 
-            //         else {
-            //             // If folder creation is successful, show success message and close dialog
-            //             sap.m.MessageBox.success("Folder created successfully", {
-            //                 onClose: function () {
-            //                     oDialog.close();
-            //                     location.reload(); 
-            //                     // Navigate back to detail2
-            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-            //                     oRouter.navTo("detail2");
-            //                 }
-            //             });
-            //         }
-            //     })
-            //     .catch(function (error) {
-            //         // Handle error
-            //         console.error('Error occurred during folder creation:', error);
-            //         sap.m.MessageBox.error("Failed to create folder");
-            //     });
-            // },
-
-
             onSavecreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
-
+            
                 // Get folder name input
                 var sFolder = oView.byId("folder").getValue();
-
+            
                 // Check if the folder exists
                 fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
-                    method: "GET", // Use POST to create folder
+                    method: "GET", 
                     headers: {
                         "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify() // Send folderName in the request body
+                    }
                 })
-                    .then(function (response) {
-                        if (!response.ok) {
-                            throw new Error('Failed to create folder');
-                        }
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        if (data.value.error) {
-                            // Error occurred during folder creation
-                            sap.m.MessageBox.error("Failed to create folder: " + data.value.error);
-                        } else if (data.value.folderExists) {
-                            // Folder already exists, show message
-                            sap.m.MessageBox.information("Folder already exists");
-                        } else if (data.success) {
-                            // Folder created successfully, show success message and close dialog
-                            sap.m.MessageBox.success("Folder created successfully", {
-                                onClose: function () {
-                                    oDialog.close();
-                                    location.reload();
-                                    // Navigate back to detail2
-                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                    oRouter.navTo("detail2");
-                                }
-                            });
-                        } else {
-                            // Unexpected response
-                            sap.m.MessageBox.error("Failed to create folder: Unexpected response");
-                        }
-                    })
-                    .catch(function (error) {
-                        // Handle error
-                        console.error('Error occurred during folder creation:', error);
-                        sap.m.MessageBox.error("Failed to create folder");
-                    });
-            },
+                .then(function (response) {        
+                    if (!response.ok) {
+                        throw new Error('Failed to create folder');
+                    }
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.value.folderExists) {
+                        sap.m.MessageBox.information("Folder already exists");
+                    } else {
+                        // Folder created successfully, show success message and close dialog
+                        sap.m.MessageBox.success("Folder created successfully", {
+                            onClose: function () {
+                                oDialog.close();
+                                location.reload();
+                                // Navigate back to detail2
+                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                oRouter.navTo("detail2");
+                            }
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    // Handle error
+                    console.error('Error occurred during folder creation:', error);
+                    sap.m.MessageBox.error("Failed to create folder");
+                });
+            },            
 
+           
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
                 this._fileUploadFragment = null;
