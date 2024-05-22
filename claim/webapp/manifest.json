@@ -24,8 +24,17 @@
           "localUri": "localService/metadata.xml",
           "odataVersion": "4.0"
         }
+      },
+      "main":{
+        "uri": "/MEDICAL CLAIM/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
       }
-    },
+    }
+  },
     "crossNavigation": {
       "inbounds": {
         "claim-dispaly": {
@@ -71,6 +80,15 @@
         "sap.ushell": {}
       }
     },
+    "componentUsages": {
+      "documentTable":{
+        "name": "",
+        "settings":{
+          "repositoryId": "0648bb78-88ca-4e7d-a999-087eecf8fbe4",
+          "folderId":"3eLP4Nl9pNs6PEvGbqc_qD11NdTXcDMLp3tyhNN0Soc`"
+        }   
+      }
+    },
     "contentDensities": {
       "compact": true,
       "cozy": true
@@ -91,6 +109,16 @@
           "autoExpandSelect": true,
           "earlyRequests": true
         }
+      },
+      "Main": {
+        "dataSource": "main",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
       }
     },
     "resources": {
@@ -99,6 +127,7 @@
           "uri": "css/style.css"
         }
       ]
+      
     },
     "routing": {
       "config": {

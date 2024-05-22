@@ -775,225 +775,49 @@
                                 text="Attachments"
                             >
                                 <Panel>
-                                    <upload:UploadSetwithTable
-                                        id="UploadSetTable"
-                                        sticky="ColumnHeaders,HeaderToolbar"
-                                        width="auto"
-                                        mode="MultiSelect"
-                                        fixedLayout="false"
-                                        inset="true"
-                                        autoPopinMode="true"
-                                        hiddenInPopin="None"
-                                        items="{path: '/items', templateShareable: false}"
-                                        maxFileNameLength="60"
-                                        uploadUrl="/MEDICAL CLAIM"
-                                        multiple="true"
-                                        beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
-                                        beforeUploadStarts="onBeforeUploadStarts"
-                                        selectionChange="onSelectionChange"
-                                        itemRenamed="onDocumentRenamedSuccess"
+                                    <upload:UploadSet
+                                        id="uploadSet"
+                                        instantUpload="false"
+                                        uploadEnabled="true"
+                                        afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
+                                        items="{
+								path: '/Files',
+								parameters: {
+									$orderby: 'createdAt desc'
+								},
+								templateShareable: false}"
                                     >
-                                        <!-- ToolBar for UploadSetwithTable -->
-                                        <upload:headerToolbar>
-                                            <OverflowToolbar>
-                                                <Title
-                                                    text="Attachments"
-                                                    level="H2"
-                                                />
-                                                <ToolbarSpacer />
-                                                <SearchField
-                                                    width="20%"
-                                                    liveChange=".onSearch"
-                                                >
-                                                    <layoutData>
-                                                        <OverflowToolbarLayoutData
-                                                            priority="NeverOverflow"
-                                                        />
-                                                    </layoutData>
-                                                </SearchField>
-                                                <ToolbarSeparator />
-                                                <upload:ActionsPlaceholder
-                                                    placeholderFor="UploadButtonPlaceholder"
-                                                />
-                                                <Button
-                                                    id="Create"
-                                                    text="Create"
-                                                    enabled="true"
-                                                    press="onCreate"
-                                                />
-                                                <Button
-                                                    id="downloadSelectedButton"
-                                                    text="Download"
-                                                    enabled="false"
-                                                    press="onDownloadFiles"
-                                                />
-                                                <MenuButton text="Add">
-                                                    <menu>
-                                                        <Menu>
-                                                            <MenuItem
-                                                                text="URL"
-                                                                press="openAddOrEditDialog"
-                                                            />
-                                                            <MenuItem
-                                                                text="Document Without File"
-                                                                press=".openDocumentWithoutFileDialog"
-                                                            />
-                                                        </Menu>
-                                                    </menu>
-                                                    <layoutData>
-                                                        <OverflowToolbarLayoutData
-                                                            priority="AlwaysOverflow"
-                                                        />
-                                                    </layoutData>
-                                                </MenuButton>
-                                                <Button
-                                                    id="removeDocumentButton"
-                                                    text="Remove"
-                                                    press=".onRemoveButtonFromMenuDocumentHandler"
-                                                    enabled="false"
-                                                >
-                                                    <layoutData>
-                                                        <OverflowToolbarLayoutData
-                                                            priority="AlwaysOverflow"
-                                                        />
-                                                    </layoutData>
-                                                </Button>
-                                                <Button
-                                                    id="renameButton"
-                                                    enabled="false"
-                                                    press="onRenameDocument"
-                                                    text="Rename"
-                                                >
-                                                    <layoutData>
-                                                        <OverflowToolbarLayoutData
-                                                            priority="AlwaysOverflow"
-                                                        />
-                                                    </layoutData>
-                                                </Button>
-                                                <Button
-                                                    id="editUrlButton"
-                                                    text="Edit URL"
-                                                    enabled="false"
-                                                    press="onEditUrl"
-                                                >
-                                                    <layoutData>
-                                                        <OverflowToolbarLayoutData
-                                                            priority="AlwaysOverflow"
-                                                        />
-                                                    </layoutData>
-                                                </Button>
-                                            </OverflowToolbar>
-                                        </upload:headerToolbar>
-
-                                        <!-- Columns for UploadSetwithTable -->
-                                        <upload:columns>
-                                            <upload:Column
-                                                id="fileName"
-                                                importance="High"
-                                            >
-                                                <upload:header>
-                                                    <Label text="Actions" />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column id="id">
-                                                <upload:header>
-                                                    <Label text="Line Number" />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column id="revision">
-                                                <upload:header>
-                                                    <Label text="File Name" />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column id="status">
-                                                <upload:header>
-                                                    <Label
-                                                        text="File Extensions"
-                                                    />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column id="fileSize">
-                                                <upload:header>
-                                                    <Label
-                                                        text="Attachments File Size"
-                                                    />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column id="Invalid">
-                                                <upload:header>
-                                                    <Label text="Invalid" />
-                                                </upload:header>
-                                            </upload:Column>
-                                            <upload:Column
-                                                id="actionButton"
-                                                importance="High"
-                                            />
-                                        </upload:columns>
-
-                                        <!-- Items aggregation with template UploadSetwithTableItem definition for each row -->
+                                        <upload:toolbar />
                                         <upload:items>
-                                            <upload:UploadSetwithTableItem
+                                            <upload:UploadSetItem
                                                 fileName="{fileName}"
                                                 mediaType="{mediaType}"
                                                 url="{url}"
-                                                highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
-                                                previewable="{previewable}"
-                                                fileSize="{fileSize}"
+                                                enabledEdit="false"
+                                                visibleEdit="false"
+                                                openPressed="onOpenPressed"
                                             >
-                                                <!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
-                                                <upload:cells>
-                                                    <HBox>
-                                                        <Image
-                                                            src="{imageUrl}"
-                                                            class="sapMUSTItemImage sapMUSTItemIcon"
-                                                            visible="{= ${imageUrl} !== undefined}"
-                                                        />
-                                                        <core:Icon
-                                                            src="{parts: ['mediaType', 'fileName'], formatter: '.getIconSrc' }"
-                                                            color="white"
-                                                            visible="{= ${imageUrl} === undefined || ${imageUrl} === '' }"
-                                                            class="sapMUSTItemImage sapMUSTItemIcon"
-                                                        />
-                                                        <VBox
-                                                            class="sapUiTinyMargin sapUiSmallMarginBegin"
-                                                        >
-                                                            <Link
-                                                                text="{fileName}"
-                                                                press="openPreview"
-                                                                class="sapUiTinyMarginBottom"
-                                                            />
-                                                            <Text
-                                                                text="{documentType}"
-                                                                class="sapUiTinyMarginTop"
-                                                            />
-                                                        </VBox>
-                                                    </HBox>
-                                                    <Text text="{id}" />
-                                                    <Link text="{revision}" />
-                                                    <Text text="{status}" />
-                                                    <Text
-                                                        text="{parts: ['fileSize'], formatter: '.getFileSizeWithUnits'}"
+                                                <upload:attributes>
+                                                    <ObjectAttribute
+                                                        title="Uploaded By"
+                                                        text="{createdBy}"
+                                                        active="false"
                                                     />
-                                                    <VBox>
-                                                        <Text
-                                                            text="{lastModifiedBy}"
-                                                        />
-                                                        <Text
-                                                            class="sapUiTinyMarginTop"
-                                                            text="{lastmodified}"
-                                                        />
-                                                    </VBox>
-                                                    <Button
-                                                        class="sapUiTinyMarginBegin"
-                                                        type="Transparent"
-                                                        icon="sap-icon://decline"
-                                                        press="onRemoveHandler"
+                                                    <ObjectAttribute
+                                                        title="Uploaded on"
+                                                        text="{createdAt}"
+                                                        active="false"
                                                     />
-                                                </upload:cells>
-                                            </upload:UploadSetwithTableItem>
+                                                    <ObjectAttribute
+                                                        title="File Size"
+                                                        text="{size}"
+                                                        active="false"
+                                                    />
+                                                </upload:attributes>
+                                            </upload:UploadSetItem>
                                         </upload:items>
-                                    </upload:UploadSetwithTable>
+                                    </upload:UploadSet>
                                 </Panel>
                             </IconTabFilter>
 

@@ -12,13 +12,13 @@
                 id="hellosave"
                 text="Save"
                 press=".onSavecreate"
-                class ="add"
+                class="add"
             />
             <Button
                 id="hellocancel"
                 text="Cancel"
                 press=".onClosecreate"
-                 class ="add"
+                class="add"
             />
         </buttons>
         <f:Form
@@ -51,15 +51,16 @@
                             <f:fields>
                                 <VBox class="spacingAfter">
                                     <Label
-                                        text="Folder Name"
+                                        text="POLICY NO"
                                         class="label"
                                     />
                                     <Input
                                         id="folder"
                                         width="400px"
-                                    />
+                                    />  
+                                    
                                 </VBox>
-                                </f:fields>  
+                            </f:fields>
                         </f:FormElement>
                     </f:formElements>
                 </f:FormContainer>

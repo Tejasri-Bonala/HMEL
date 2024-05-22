@@ -51,8 +51,8 @@ sap.ui.define([
                 var oDateFormat = DateFormat.getDateTimeInstance({ pattern: "yyyy/MM/dd" });
                 this.updateCurrentDate(oDateFormat);
                 this.scheduleDailyUpdate(oDateFormat);
-
             },
+
 
 
             getRouter: function () {
@@ -1699,14 +1699,37 @@ sap.ui.define([
                     }
                 );
             },
+
+
             //UPLOAD START FROM HERE//
             onBeforeInitiatingItemUpload: function (oEvent) {
-                // Event triggered before initiating each upload.
+                var oUploadSetTableInstance = this.byId("UploadSetTable");
+                var oItem = oEvent.getParameter("item");
+
+                /** Demonstration of Updating the Document without file with actual file.
+                 * Note:- This is just a demonstration of an idea of how the feature can be achieved by setting the header field data of an empty documentId on the UploadSetwithTableItem instance.
+                 * Please check mockserver.js for the logic to simulate how the empty document is updated with the file selected for upload using the existing document id.
+                 */
+                var oSelectedItems = oUploadSetTableInstance.getSelectedItems();
+                var oSelectedItemForUpdate = oSelectedItems.length === 1 ? oSelectedItems[0] : null;
+                if (oSelectedItemForUpdate && oSelectedItemForUpdate.getFileName() === "-") {
+                    if (oSelectedItemForUpdate) {
+                        var oContext = oSelectedItemForUpdate.getBindingContext();
+                        var data = oContext && oContext.getObject ? oContext.getObject() : {};
+                        oItem.addHeaderField(new sap.m.UploadCollectionParameter({
+                            name: "existingDocumentID",
+                            value: data ? data.id : ""
+                        }));
+                    }
+                }
             },
+
+
+
             // UploadCompleted event handler
             onUploadCompleted: function (oEvent) {
                 var oModel = this.getView().getModel();
-                var iResponseStatus = oEvent.getParameter("status");
+                var iResponseStatus = oEvent.getParameter("File Id");
 
                 // check for upload is sucess
                 if (iResponseStatus === 201) {
@@ -1715,8 +1738,6 @@ sap.ui.define([
                         MessageToast.show("Document Added");
                     }, 1000);
                 }
-                // This code block is only for demonstration purpose to simulate XHR requests, hence restoring the server to not fake the xhr requests.
-                // this.oMockServer.restore();
             },
 
             getIconSrc: function (mediaType, thumbnailUrl) {
@@ -1730,16 +1751,118 @@ sap.ui.define([
                     { categoryId: "Original Bill", categoryText: "Original Bill" },
                 ];
             },
+            onRemoveHandler: function (oEvent) {
+                var clickedControl = oEvent.getSource();
+                var olistItemTobeRemoved = null;
+
+                // Traverse up the control hierarchy to find the ColumnListItem
+                while (clickedControl && !(clickedControl instanceof UploadSetwithTableItem)) {
+                    clickedControl = clickedControl.getParent();
+                }
+
+                if (clickedControl instanceof UploadSetwithTableItem) {
+                    olistItemTobeRemoved = clickedControl;
+                }
+                this.removeItem(olistItemTobeRemoved);
+            },
+            removeItem: function (oItem) {
+                var oModel = this.getView().getModel();
+                var oUploadSet = this.byId("UploadSetTable");
+                MessageBox.warning(
+                    "Are you sure you want to remove the document" + " " + oItem.getFileName() + " " + "?",
+                    {
+                        icon: MessageBox.Icon.WARNING,
+                        actions: ["Remove", MessageBox.Action.CANCEL],
+                        emphasizedAction: "Remove",
+                        styleClass: "sapMUSTRemovePopoverContainer",
+                        initialFocus: MessageBox.Action.CANCEL,
+                        onClose: function (sAction) {
+                            if (sAction !== "Remove") {
+                                return;
+                            }
+                            var spath = oItem.getBindingContext().sPath;
+                            if (spath.split("/")[2]) {
+                                var index = spath.split("/")[2];
+                                var data = oModel.getProperty("/items");
+                                data.splice(index, 1);
+                                oModel.refresh(true);
+                                if (oUploadSet && oUploadSet.removeSelections) {
+                                    oUploadSet.removeSelections();
+                                }
+                            }
+                        }
+                    }
+                );
+            },
+            handleRemove: function (oEvent) {
+                var oSource = oEvent.getSource();
+                var oItemInstance = oSource.data().item;
+                var fnReject = oSource.data().reject;
+                var oFragmentModel = this._fileUploadFragment.getModel();
+                var oSelectedItems = oFragmentModel.getData().selectedItems;
+                var iSelectedItemIndex = oSelectedItems.findIndex(function (oItem) {
+                    return oItem.itemInstance.getId() === oItemInstance.getId();
+                });
+                oSelectedItems.splice(iSelectedItemIndex, 1);
+                this._oFilesTobeuploaded.splice(iSelectedItemIndex, 1);
+                var oModel = new JSONModel({
+                    "selectedItems": oSelectedItems,
+                    "types": this.documentTypes
+
+                });
+                this._fileUploadFragment.setModel(oModel);
+
+                // cancel the upload of the current item selected for upload.
+                fnReject(oItemInstance);
+            },
+            uploadFilesHandler: function () {
+                var oUploadSetTableInstance = this.byId("UploadSetTable");
+
+                oUploadSetTableInstance.fileSelectionHandler();
+            },
+
+            uploadFile: function (itemInstance, fileCategorySelected) {
+                var oFile = itemInstance.getFileObject();
+                var sUrl = "https://api-sdm-di.cfapps.eu10.hana.ondemand.com/browser/0648bb78-88ca-4e7d-a999-087eecf8fbe4/root/MEDICAL CLAIM/TEST REPORT/";
+
+                var oFormData = new FormData();
+                oFormData.append("file", oFile);
+                oFormData.append("category", fileCategorySelected);
+
+                fetch(sUrl, {
+                    method: "POST",
+                    body: oFormData
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        MessageToast.show("File uploaded successfully");
+                    })
+                    .catch(function (error) {
+                        MessageToast.show("File upload failed: " + error.message);
+                    });
+            },
+
+            onDocumentTypeChange: function (oEvent) {
+                var oComboBox = oEvent.getSource();
+                var sSelectedKey = oComboBox.getSelectedKey();
+                var oBindingContext = oComboBox.getBindingContext();
+                var oModel = oBindingContext.getModel();
+
+                oModel.setProperty(oBindingContext.getPath() + "/fileCategorySelected", sSelectedKey);
+            },
             //open fragment
             openFileUploadDialog: function () {
                 var items = this.oItemsProcessor;
 
                 if (items && items.length) {
-
                     this._oFilesTobeuploaded = items;
 
                     var oItemsMap = this._oFilesTobeuploaded.map(function (oItemProcessor) {
-
                         return {
                             fileName: oItemProcessor.item.getFileName(),
                             fileCategorySelected: this.documentTypes[0].categoryId,
@@ -1748,11 +1871,12 @@ sap.ui.define([
                             fnReject: oItemProcessor.reject
                         };
                     }.bind(this));
+
                     var oModel = new JSONModel({
                         "selectedItems": oItemsMap,
                         "types": this.documentTypes
-
                     });
+
                     if (!this._fileUploadFragment) {
                         Fragment.load({
                             name: "claim.fragments.FileUpload",
@@ -1770,6 +1894,17 @@ sap.ui.define([
                         this._fileUploadFragment.open();
                     }
                 }
+            },
+            getFileSizeWithUnits: function (iFileSize) {
+                return UploadSetwithTable.getFileSizeWithUnits(iFileSize);
+            },
+
+            openPreview: function (oEvent) {
+                var clickedControl = oEvent.getSource();
+                while (clickedControl && !(clickedControl instanceof UploadSetwithTableItem)) {
+                    clickedControl = clickedControl.getParent();
+                }
+                clickedControl.openPreview();
             },
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
@@ -1827,11 +1962,7 @@ sap.ui.define([
                 this._oFilesTobeuploaded = [];
                 this.oItemsProcessor = [];
             },
-            uploadFilesHandler: function () {
-                var oUploadSetTableInstance = this.byId("UploadSetTable");
 
-                oUploadSetTableInstance.fileSelectionHandler();
-            },
             itemValidationCallback: function (oItemInfo) {
                 const { oItem, iTotalItemsForUpload } = oItemInfo;
                 var oUploadSetTableInstance = this.byId("UploadSetTable");
@@ -1870,6 +2001,50 @@ sap.ui.define([
                     return oItemPromise;
                 }
             },
+
+
+            onBeforeUploadStarts: function (oEvent) {
+                var oItem = oEvent.getParameter("item");
+                var oXhr = oEvent.getParameter("request");
+
+                // Fetch the token (ensure this token fetching logic is executed appropriately in your application)
+                fetchOAuthToken().then(function (token) {
+                    oXhr.setRequestHeader("Authorization", "Bearer " + token);
+                    oXhr.setRequestHeader("Content-Type", "application/json");
+
+                    // Modify request URL if necessary
+                    var sUrl = "https://api-sdm-di.cfapps.eu10.hana.ondemand.com/browser/0648bb78-88ca-4e7d-a999-087eecf8fbe4/root/MEDICAL CLAIM/TEST REPORT/";
+                    oXhr.open("POST", sUrl, true);
+                }).catch(function (error) {
+                    console.error("Failed to fetch token", error);
+                    // Handle the error appropriately in your application
+                });
+            },
+            fetchOAuthToken: function () {
+                return new Promise(function (resolve, reject) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "https://development-aarini.authentication.eu10.hana.ondemand.com/oauth/token");
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                    // Client credentials
+                    var clientId = "sb-4c81044e-143b-4176-9913-48795aef851c!b153074|sdm-di-SDM_DI_PROD-prod!b41064";
+                    var clientSecret = "BSUo6IhaMamfbkYw9BA4y/CO+m0=";
+                    var params = `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`;
+
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            resolve(response.access_token);
+                        } else {
+                            reject(new Error("Failed to fetch token"));
+                        }
+                    };
+                    xhr.onerror = function () {
+                        reject(new Error("Network error"));
+                    };
+                    xhr.send(params);
+                });
+            },
             onCreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
@@ -1897,47 +2072,110 @@ sap.ui.define([
             onSavecreate: function () {
                 var oView = this.getView();
                 var oDialog = oView.byId("create");
-            
+
                 // Get folder name input
                 var sFolder = oView.byId("folder").getValue();
-            
+
                 // Check if the folder exists
-                fetch("./odata/v4/my/createFolder(folderName='" + sFolder + "')", {
-                    method: "GET", 
+                fetch("./odata/v4/my/DMS_ATT", {
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     }
                 })
-                .then(function (response) {        
-                    if (!response.ok) {
-                        throw new Error('Failed to create folder');
-                    }
-                    return response.json();
-                })
-                .then(function (data) {
-                    if (data.value.folderExists) {
-                        sap.m.MessageBox.information("Folder already exists");
-                    } else {
-                        // Folder created successfully, show success message and close dialog
-                        sap.m.MessageBox.success("Folder created successfully", {
-                            onClose: function () {
-                                oDialog.close();
-                                location.reload();
-                                // Navigate back to detail2
-                                var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
-                                oRouter.navTo("detail2");
-                            }
-                        });
-                    }
-                })
-                .catch(function (error) {
-                    // Handle error
-                    console.error('Error occurred during folder creation:', error);
-                    sap.m.MessageBox.error("Failed to create folder");
-                });
-            },            
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Failed to create folder');
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (data.value.folderExists) {
+                            sap.m.MessageBox.information("Folder already exists");
+                        } else {
+                            // Folder created successfully, show success message and close dialog
+                            sap.m.MessageBox.success("Folder created successfully", {
+                                onClose: function () {
+                                    oDialog.close();
+                                    location.reload();
+                                    // Navigate back to detail2
+                                    var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+                                    oRouter.navTo("detail2");
+                                }
+                            });
+                        }
+                    })
+                    .catch(function (error) {
+                        // Handle error
+                        console.error('Error occurred during folder creation:', error);
+                        sap.m.MessageBox.error("Failed to create folder");
+                    });
+            },
 
-           
+            // onSavecreate: function () {
+            //     var oView = this.getView();
+            //     var oDialog = oView.byId("create");
+
+            //     // Get input values
+            //     var sPolicyNo = oView.byId("folder").getValue();
+            //     var sFileName = oView.byId("fileName").getValue();
+            //     var oFileUploader = oView.byId("fileUploader");
+            //     var oFile = oFileUploader.getFocusDomRef().files[0];
+
+            //     if (!sPolicyNo || !sFileName || !oFile) {
+            //         MessageBox.error("Policy number, file name, and file content are mandatory.");
+            //         return;
+            //     }
+
+            //     // Read file content as base64
+            //     var reader = new FileReader();
+            //     reader.onload = function (e) {
+            //         var sFileContent = e.target.result.split(',')[1]; // Get base64 content
+
+            //         // Prepare data payload
+            //         var oData = {
+            //             POLICYNO: sPolicyNo,
+            //             FILE_NAME: sFileName,
+            //             FILE_CONTENT: sFileContent,
+            //             MEDIA_TYPE: oFile.type
+            //         };
+
+            //         // Send data to backend
+            //         fetch("/odata/v4/my/service/DMS_ATT", {
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json"
+            //             },
+            //             body: JSON.stringify(oData)
+            //         })
+            //         .then(function (response) {
+            //             if (!response.ok) {
+            //                 throw new Error('Failed to create DMS_ATT record');
+            //             }
+            //             return response.json();
+            //         })
+            //         .then(function (data) {
+            //             // Show success message and close dialog
+            //             MessageBox.success("File uploaded and folder created successfully", {
+            //                 onClose: function () {
+            //                     oDialog.close();
+            //                     location.reload();
+            //                     // Navigate back to detail2
+            //                     var oRouter = sap.ui.core.UIComponent.getRouterFor(oView);
+            //                     oRouter.navTo("detail2");
+            //                 }
+            //             });
+            //         })
+            //         .catch(function (error) {
+            //             // Handle error
+            //             console.error('Error occurred during file upload:', error);
+            //             MessageBox.error("Failed to upload file and create folder");
+            //         });
+            //     };
+
+            //     reader.readAsDataURL(oFile); // Read file content
+            // },
+
             closeFileUplaodFragment: function () {
                 this._fileUploadFragment.destroy();
                 this._fileUploadFragment = null;
@@ -2075,7 +2313,227 @@ sap.ui.define([
                 // Return the numeric-only value
                 return sNumericOnlyValue;
             },
+            // onAfterItemAdded: function (oEvent) {
+            //     var item = oEvent.getParameter("item");
+            //     this._createEntity(item)
+            //         .then((id) => {
+            //             console.log("Entity created successfully. ID:", id);
+            //             this._uploadContent(item, id);
+            //         })
+            //         .catch((err) => {
+            //             console.error("Error creating entity:", err);
+            //             // Handle the error appropriately
+            //         });
+            // },
 
+            onAfterItemAdded: function (oEvent) {
+                var item = oEvent.getParameter("item");
+                var policyNumber = this.byId("PolicyNumber").getSelectedKey(); // Get selected policy number
+    
+                if (!policyNumber) {
+                    sap.m.MessageToast.show("Please select a policy number.");
+                    return;
+                }
+    
+                // Set the policy number to the item before triggering the CREATE event
+                item.policyNumber = policyNumber;
+    
+                this._triggerCreateEvent(item);
+            },
+    
+            onUploadCompleted: function (oEvent) {
+                var oUploadSet = this.byId("uploadSet");
+                oUploadSet.removeAllIncompleteItems();
+                oUploadSet.getBinding("items").refresh();
+            },
+    
+            onOpenPressed: function (oEvent) {
+                // Implement the open pressed logic here
+            },
+            _triggerCreateEvent: function(item) {
+                var policyNumber = this.byId("PolicyNumber").getSelectedKey();
+            
+                if (!policyNumber) {
+                    console.error("No policy number selected");
+                    sap.m.MessageToast.show("Please select a policy number.");
+                    return;
+                }
+            
+                var fileName = item.getFileName();
+                var mediaType = item.getMediaType();
+            
+                if (!fileName || !mediaType) {
+                    console.error("File name or media type is missing");
+                    sap.m.MessageToast.show("File name or media type is missing.");
+                    return;
+                }
+            
+                var file = item.getFileObject();
+            
+                if (!file) {
+                    console.error("File object is missing");
+                    sap.m.MessageToast.show("File object is missing.");
+                    return;
+                }
+            
+                var reader = new FileReader();
+                reader.onload = (e) => {
+                    var fileContent = e.target.result.split(",")[1]; // Get base64 content
+            
+                    var data = {
+                        "UPLOADED_DATE": new Date().toISOString(),
+                        "UPLOADED_BY": "ASHWIN",
+                        "FILE_URL": "MEDICAL CLAIM",
+                        "MEDIA_TYPE": mediaType,
+                        "FILE_NAME": fileName,
+                        "FILE_NAME_DMS": `${fileName}_${new Date().toISOString()}`,
+                        "BUSINESS_DOC_TYPE": "Test report",
+                        "POLICYNO": policyNumber,
+                        "FILE_CONTENT": fileContent
+                    };
+            
+                    console.log("Data to be sent:", data);
+            
+                    var settings = {
+                        url: "./odata/v4/my/DMS_ATT",
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(data)
+                    };
+            
+                    $.ajax(settings)
+                        .done((results, textStatus, request) => {
+                            console.log("File uploaded successfully:", results);
+                            this._uploadContent(item, policyNumber); // Trigger the file content upload
+                        })
+                        .fail((xhr, textStatus, errorThrown) => {
+                            console.error("Error uploading file:", xhr.status, xhr.statusText, xhr.responseText);
+                            sap.m.MessageToast.show("Error uploading file: " + xhr.responseText);
+                        });
+                };
+                reader.readAsDataURL(file);
+            },            
 
+            // _triggerCreateEvent: function(item) {
+            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey();
+            
+            //     if (!policyNumber) {
+            //         console.error("No policy number selected");
+            //         sap.m.MessageToast.show("Please select a policy number.");
+            //         return;
+            //     }
+            
+            //     var fileName = item.getFileName();
+            //     var mediaType = item.getMediaType();
+            
+            //     if (!fileName || !mediaType) {
+            //         console.error("File name or media type is missing");
+            //         sap.m.MessageToast.show("File name or media type is missing.");
+            //         return;
+            //     }
+            
+            //     var file = item.getFileObject();
+            
+            //     if (!file) {
+            //         console.error("File object is missing");
+            //         sap.m.MessageToast.show("File object is missing.");
+            //         return;
+            //     }
+            
+            //     var reader = new FileReader();
+            //     reader.onload = (e) => {
+            //         var fileContent = e.target.result.split(",")[1]; // Get base64 content
+            
+            //         var data = {
+            //             "UPLOADED_DATE": new Date().toISOString(),
+            //             "UPLOADED_BY": "ASHWIN",
+            //             "FILE_URL": "MEDICAL CLAIM",
+            //             "MEDIA_TYPE": mediaType,
+            //             "FILE_NAME": fileName,
+            //             "FILE_NAME_DMS": `${fileName}_${new Date().toISOString()}`,
+            //             "BUSINESS_DOC_TYPE": "Test report",
+            //             "POLICYNO": policyNumber,
+            //             "FILE_CONTENT": fileContent
+            //         };
+            
+            //         console.log("Data to be sent:", data);
+            
+            //         var settings = {
+            //             url: "./odata/v4/my/DMS_ATT",
+            //             method: "POST",
+            //             headers: {
+            //                 "Content-Type": "application/json"
+            //             },
+            //             data: JSON.stringify(data)
+            //         };
+            
+            //         $.ajax(settings)
+            //             .done((results, textStatus, request) => {
+            //                 console.log("File uploaded successfully:", results);
+            //                 // Trigger any further upload processing if needed
+            //             })
+            //             .fail((xhr, textStatus, errorThrown) => {
+            //                 console.error("Error uploading file:", xhr.status, xhr.statusText, xhr.responseText);
+            //                 sap.m.MessageToast.show("Error uploading file: " + xhr.responseText);
+            //             });
+            //     };
+            //     reader.readAsDataURL(file);
+            // },            
+
+            _uploadContent: function (item, policyNumber) {
+                if (!policyNumber) {
+                    console.error("No policy number selected for upload");
+                    return;
+                }
+    
+                var url = `/MEDICAL CLAIM/TEST REPORT/${policyNumber}`;
+                item.setUploadUrl(url);
+    
+                var oUploadSet = this.byId("uploadSet");
+                oUploadSet.setHttpRequestMethod("POST");
+                oUploadSet.uploadItem(item);
+            }
+            // _createEntity: function (item) {
+            //     // Get the selected policy number from the Select component
+            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey();
+            
+            //     var data = {
+            //         "UPLOADED_DATE": new Date().toISOString(),
+            //         "UPLOADED_BY": "ASHWIN",
+            //         "FILE_URL": "MEDICAL CLAIM",
+            //         "MEDIA_TYPE": item.getMediaType(),
+            //         "FILE_NAME": item.getFileName(),
+            //         "FILE_NAME_DMS": item.getFileName() + new Date().toISOString(),
+            //         "BUSINESS_DOC_TYPE": "Test report",
+            //         "POLICYNO": policyNumber 
+            //     };
+            
+            //     var settings = {
+            //         url: "/odata/v4/my/DMS_ATT",
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json"
+            //         },
+            //         data: JSON.stringify(data)
+            //     };
+            
+            //     return new Promise((resolve, reject) => {
+            //         $.ajax(settings)
+            //             .done((results, textStatus, request) => {
+            //                 console.log("Document Added Successfully:", results);
+            //                 resolve(results.ID);
+            //             })
+            //             .fail((xhr, textStatus, errorThrown) => {
+            //                 console.error("Error creating entity:");
+            //                 console.error("Status:", xhr.status);
+            //                 console.error("Status text:", xhr.statusText);
+            //                 console.error("Response text:", xhr.responseText);
+            //                 reject(xhr);
+            //             });
+            //     });
+            // },
+            
         });
     });

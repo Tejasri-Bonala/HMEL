@@ -40,7 +40,7 @@
       <Button text="Add" type="Emphasized" enabled="{parts: ['/selectedItems'], formatter: '.isAddButtonEnabled'}" press=".handleConfirmation" />
     </beginButton>
     <endButton>
-      <Button text="Cancel" press=".closeFileUplaodFragment" />
+      <Button text="Cancel" press=".closeFileUploadFragment" />
     </endButton>
   </Dialog>
 </core:FragmentDefinition>
