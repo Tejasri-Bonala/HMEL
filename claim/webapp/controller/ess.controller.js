@@ -2495,45 +2495,6 @@ sap.ui.define([
                 oUploadSet.setHttpRequestMethod("POST");
                 oUploadSet.uploadItem(item);
             }
-            // _createEntity: function (item) {
-            //     // Get the selected policy number from the Select component
-            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey();
-            
-            //     var data = {
-            //         "UPLOADED_DATE": new Date().toISOString(),
-            //         "UPLOADED_BY": "ASHWIN",
-            //         "FILE_URL": "MEDICAL CLAIM",
-            //         "MEDIA_TYPE": item.getMediaType(),
-            //         "FILE_NAME": item.getFileName(),
-            //         "FILE_NAME_DMS": item.getFileName() + new Date().toISOString(),
-            //         "BUSINESS_DOC_TYPE": "Test report",
-            //         "POLICYNO": policyNumber 
-            //     };
-            
-            //     var settings = {
-            //         url: "/odata/v4/my/DMS_ATT",
-            //         method: "POST",
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         data: JSON.stringify(data)
-            //     };
-            
-            //     return new Promise((resolve, reject) => {
-            //         $.ajax(settings)
-            //             .done((results, textStatus, request) => {
-            //                 console.log("Document Added Successfully:", results);
-            //                 resolve(results.ID);
-            //             })
-            //             .fail((xhr, textStatus, errorThrown) => {
-            //                 console.error("Error creating entity:");
-            //                 console.error("Status:", xhr.status);
-            //                 console.error("Status text:", xhr.statusText);
-            //                 console.error("Response text:", xhr.responseText);
-            //                 reject(xhr);
-            //             });
-            //     });
-            // },
             
         });
     });

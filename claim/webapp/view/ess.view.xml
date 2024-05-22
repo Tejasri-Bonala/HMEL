@@ -782,17 +782,15 @@
                                         afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
                                         items="{
-								path: '/Files',
-								parameters: {
-									$orderby: 'createdAt desc'
-								},
+								path: 'MainModel>/DMS_ATT',
+								
 								templateShareable: false}"
                                     >
                                         <upload:toolbar />
                                         <upload:items>
                                             <upload:UploadSetItem
-                                                fileName="{fileName}"
-                                                mediaType="{mediaType}"
+                                                fileName="{MainModel>FILE_NAME}"
+                                                mediaType="{MainModle>MEDIA_TYPE}"
                                                 url="{url}"
                                                 enabledEdit="false"
                                                 visibleEdit="false"
@@ -800,18 +798,8 @@
                                             >
                                                 <upload:attributes>
                                                     <ObjectAttribute
-                                                        title="Uploaded By"
-                                                        text="{createdBy}"
-                                                        active="false"
-                                                    />
-                                                    <ObjectAttribute
-                                                        title="Uploaded on"
-                                                        text="{createdAt}"
-                                                        active="false"
-                                                    />
-                                                    <ObjectAttribute
-                                                        title="File Size"
-                                                        text="{size}"
+                                                       
+                                                        text="{MainModel>FILE_NAME}"
                                                         active="false"
                                                     />
                                                 </upload:attributes>
