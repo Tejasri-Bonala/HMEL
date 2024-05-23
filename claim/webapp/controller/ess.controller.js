@@ -66,47 +66,47 @@ sap.ui.define([
                 oRouter.navTo("RouteLogin");
             },
 
-            // onTabSelect: function (oEvent) {
-            //     this.updateButtonVisibility();
+            onTabSelect: function (oEvent) {
+                this.updateButtonVisibility();
 
-            //     var sSelectedKey = oEvent.getParameter("key");
+                var sSelectedKey = oEvent.getParameter("key");
 
-            //     // Check if moving from "Claim Details" to "Create" tab
-            //     if (this.sLastSelectedTab === "claimDetails") {
-            //         // Validate fields in "Claim Details" tab
+                // Check if moving from "Claim Details" to "Create" tab
+                if (this.sLastSelectedTab === "claimDetails") {
+                    // Validate fields in "Claim Details" tab
 
-            //         // Save data from the current tab to the localModel
-            //         this.saveDataTolocalModel();
-            //         var aMissingFields = this.validateRequiredFields("claimDetails");
-            //         if (aMissingFields.length > 0) {
-            //             // Show an error message with missing required fields
-            //             var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
-            //             MessageBox.error(sErrorMessage);
-            //             // If validation fails, prevent switching to the "Create" tab
-            //             this.byId("myIconTabBar").setSelectedKey("claimDetails");
-            //             return;
-            //         }
-            //     }
-            //     else if (this.sLastSelectedTab === "Create") {
-            //         var oCheckBoxAccept = this.byId("Accept");
-            //         var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
+                    // Save data from the current tab to the localModel
+                    this.saveDataTolocalModel();
+                    var aMissingFields = this.validateRequiredFields("claimDetails");
+                    if (aMissingFields.length > 0) {
+                        // Show an error message with missing required fields
+                        var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
+                        MessageBox.error(sErrorMessage);
+                        // If validation fails, prevent switching to the "Create" tab
+                        this.byId("myIconTabBar").setSelectedKey("claimDetails");
+                        return;
+                    }
+                }
+                else if (this.sLastSelectedTab === "Create") {
+                    var oCheckBoxAccept = this.byId("Accept");
+                    var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
 
-            //         if (!bIsCheckBoxChecked) {
-            //             // CheckBox is not checked, show an error message
-            //             MessageBox.error("Please acknowledge and accept the terms and conditions.");
-            //             this.byId("myIconTabBar").setSelectedKey("Create");
-            //             return;
-            //         }
-            //     }
+                    if (!bIsCheckBoxChecked) {
+                        // CheckBox is not checked, show an error message
+                        MessageBox.error("Please acknowledge and accept the terms and conditions.");
+                        this.byId("myIconTabBar").setSelectedKey("Create");
+                        return;
+                    }
+                }
 
-            //     // Continue with the normal logic for other tabs
-            //     this.sLastSelectedTab = sSelectedKey;
+                // Continue with the normal logic for other tabs
+                this.sLastSelectedTab = sSelectedKey;
 
-            //     // Your existing logic for the selected tab
-            //     if (sSelectedKey === "review") {
-            //         this.updateTotalRequestedAmount();
-            //     }
-            // },
+                // Your existing logic for the selected tab
+                if (sSelectedKey === "review") {
+                    this.updateTotalRequestedAmount();
+                }
+            },
 
             validateAndSwitchTab: function (currentTab, nextTab) {
                 var aMissingFields = this.validateRequiredFields(currentTab);

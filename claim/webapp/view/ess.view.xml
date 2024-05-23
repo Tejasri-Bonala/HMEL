@@ -787,7 +787,7 @@
                                         afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
                                         items="{
-								path: '',
+								path: 'MainModel>/DMS_ATT',
                                  sorter: {
                 path: 'UPLOADED_DATE',
                 descending: true
