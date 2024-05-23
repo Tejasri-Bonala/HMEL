@@ -774,32 +774,54 @@
                                 key="Attachhments"
                                 text="Attachments"
                             >
-                                <Panel>
+                                <Panel
+                                    headerText="ATACHMENTS"
+                                    stickyHeader="true"
+                                >
                                     <upload:UploadSet
                                         id="uploadSet"
+                                       
                                         instantUpload="false"
                                         uploadEnabled="true"
+                                        terminationEnabled="false"
                                         afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
                                         items="{
 								path: 'MainModel>/DMS_ATT',
-								
 								templateShareable: false}"
                                     >
-                                        <upload:toolbar />
+                                        <upload:toolbar>
+                                            <OverflowToolbar>
+                                                <ToolbarSpacer />
+
+                                                <Button
+                                                    id="downloadSelectedButton"
+                                                    text="Download"
+                                                    press="onDownloadSelectedButton"
+                                                />
+                                                 <Button
+                                                    id="deleteSelectedButton"
+                                                    text="Delete"
+                                                    press="onDownloadSelectedButton"
+                                                /> 
+                                            </OverflowToolbar>
+                                        </upload:toolbar>
                                         <upload:items>
                                             <upload:UploadSetItem
                                                 fileName="{MainModel>FILE_NAME}"
                                                 mediaType="{MainModle>MEDIA_TYPE}"
-                                                url="{url}"
-                                                enabledEdit="false"
-                                                visibleEdit="false"
+                                                enabledEdit="true"
+                                                visibleEdit="true"
                                                 openPressed="onOpenPressed"
+                                                url="{MainModel>FILE_URL}"
+                                                thumbnailUrl="{
+								path: 'mediaType',
+								formatter: '.formatThumbnailUrl'
+							}"
                                             >
                                                 <upload:attributes>
                                                     <ObjectAttribute
-                                                       
-                                                        text="{MainModel>FILE_NAME}"
+                                                        text="{MainModel>UPLOADED_DATE}"
                                                         active="false"
                                                     />
                                                 </upload:attributes>
@@ -910,6 +932,10 @@
                                                                             text="Submitted Date:"
                                                                             class="detaillabel"
                                                                         />
+                                                                         <Label
+                                                                            text="Policy Number:"
+                                                                            class="detaillabel"
+                                                                        />
                                                                     </VBox>
                                                                     <VBox
                                                                         class="details-column"
@@ -975,6 +1001,11 @@
                                                                             class="claimtext"
                                                                             id="dateDisplay"
                                                                             text="{CurrentDate>/currentDate}"
+                                                                        />
+                                                                         <Text
+                                                                            text="{localModel>/Policynumber}"
+                                                                            class="claimtext"
+                                                                            id="pn"
                                                                         />
                                                                     </VBox>
                                                                 </HBox>
