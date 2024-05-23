@@ -787,7 +787,11 @@
                                         afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
                                         items="{
-								path: 'MainModel>/DMS_ATT',
+								path: '',
+                                 sorter: {
+                path: 'UPLOADED_DATE',
+                descending: true
+            },
 								templateShareable: false}"
                                     >
                                         <upload:toolbar>
@@ -936,6 +940,7 @@
                                                                             text="Policy Number:"
                                                                             class="detaillabel"
                                                                         />
+                                                                         <Label text="Uploaded File:" class="detaillabel" />
                                                                     </VBox>
                                                                     <VBox
                                                                         class="details-column"
@@ -1007,6 +1012,8 @@
                                                                             class="claimtext"
                                                                             id="pn"
                                                                         />
+                                                                      <Text text="{localModel>/uploadedFileName}" class="claimtext" id="uploadedFileName" />
+
                                                                     </VBox>
                                                                 </HBox>
                                                             </CustomListItem>

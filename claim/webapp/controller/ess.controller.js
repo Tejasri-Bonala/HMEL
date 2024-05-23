@@ -387,7 +387,7 @@ sap.ui.define([
                 }
             },
 
-            saveDataTolocalModel: function () {
+            saveDataTolocalModel: function (item) {
                 var olocalModel = this.getView().getModel("localModel");
 
                 // Set properties for Claim Type
@@ -410,10 +410,28 @@ sap.ui.define([
                 olocalModel.setProperty("/claimId", this.byId("claimIdLabel").getText());
 
                 olocalModel.setProperty("/Policynumber", this.byId("PolicyNumber").getSelectedKey());
+                
+                if (item)
+                {
+                    let fileName = item.getFileName();
+                    olocalModel.setProperty("/uploadedFileName", fileName);
+                    olocalModel.setProperty("/uploadedFileItem", item);
+                }
+                
 
                 // var claimIdInput = this.byId("claimIdInput");
                 // var claimId = claimIdInput.getValue().replace(/\D/g, ''); 
                 // olocalModel.setProperty("/claimId", claimId);
+
+                // var uploadSet = this.byId("uploadSet");
+                // var items = uploadSet.getItems();
+                // if (items.length > 0) {
+                //     var fileName = items[0].getFileName(); // Assuming only one file is uploaded at a time
+                //     olocalModel.setProperty("/uploadedFileName", fileName);
+                //     olocalModel.setProperty("/uploadedFileItem", item);
+                // } else {
+                //     olocalModel.setProperty("/uploadedFileName", ""); // Clear if no files are uploaded
+                // }
 
 
             },
@@ -1040,7 +1058,7 @@ sap.ui.define([
             },
 
            
-            handleSubmit: function () {
+            handleSubmit: async function () {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
                 var AD = localModel.getData();
@@ -1048,6 +1066,10 @@ sap.ui.define([
                 var id = AD.dataValue[0].ID;
                 var currentDate = new Date().toISOString().split('T')[0];
                 var promises = [];
+
+                var uploadedItem = AD.uploadedFileItem;
+
+                await this._triggerCreateEvent(uploadedItem);
 
                 allDetails.forEach(function (detail) {
                     var claim = {
@@ -1732,8 +1754,11 @@ sap.ui.define([
     
                 // Set the policy number to the item before triggering the CREATE event
                 item.policyNumber = policyNumber;
+
+                this.saveDataTolocalModel(item);
+
     
-                this._triggerCreateEvent(item);
+                // this._triggerCreateEvent(item);
             },
 
             // onAfterItemAdded: function (oEvent) {
@@ -1870,72 +1895,7 @@ sap.ui.define([
                 reader.readAsDataURL(file);
             },            
 
-            // _triggerCreateEvent: function(item) {
-            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey();
-            
-            //     if (!policyNumber) {
-            //         console.error("No policy number selected");
-            //         sap.m.MessageToast.show("Please select a policy number.");
-            //         return;
-            //     }
-            
-            //     var fileName = item.getFileName();
-            //     var mediaType = item.getMediaType();
-            
-            //     if (!fileName || !mediaType) {
-            //         console.error("File name or media type is missing");
-            //         sap.m.MessageToast.show("File name or media type is missing.");
-            //         return;
-            //     }
-            
-            //     var file = item.getFileObject();
-            
-            //     if (!file) {
-            //         console.error("File object is missing");
-            //         sap.m.MessageToast.show("File object is missing.");
-            //         return;
-            //     }
-            
-            //     var reader = new FileReader();
-            //     reader.onload = (e) => {
-            //         var fileContent = e.target.result.split(",")[1]; // Get base64 content
-            
-            //         var data = {
-            //             "UPLOADED_DATE": new Date().toISOString(),
-            //             "UPLOADED_BY": "ASHWIN",
-            //             "FILE_URL": "MEDICAL CLAIM",
-            //             "MEDIA_TYPE": mediaType,
-            //             "FILE_NAME": fileName,
-            //             "FILE_NAME_DMS": `${fileName}_${new Date().toISOString()}`,
-            //             "BUSINESS_DOC_TYPE": "Test report",
-            //             "POLICYNO": policyNumber,
-            //             "FILE_CONTENT": fileContent
-            //         };
-            
-            //         console.log("Data to be sent:", data);
-            
-            //         var settings = {
-            //             url: "./odata/v4/my/DMS_ATT",
-            //             method: "POST",
-            //             headers: {
-            //                 "Content-Type": "application/json"
-            //             },
-            //             data: JSON.stringify(data)
-            //         };
-            
-            //         $.ajax(settings)
-            //             .done((results, textStatus, request) => {
-            //                 console.log("File uploaded successfully:", results);
-            //                 // Trigger any further upload processing if needed
-            //             })
-            //             .fail((xhr, textStatus, errorThrown) => {
-            //                 console.error("Error uploading file:", xhr.status, xhr.statusText, xhr.responseText);
-            //                 sap.m.MessageToast.show("Error uploading file: " + xhr.responseText);
-            //             });
-            //     };
-            //     reader.readAsDataURL(file);
-            // },            
-
+           
             _uploadContent: function (item, policyNumber) {
                 if (!policyNumber) {
                     console.error("No policy number selected for upload");
