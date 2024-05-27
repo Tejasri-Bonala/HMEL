@@ -1076,10 +1076,10 @@ sap.ui.define([
                         CLAIM_ID: parseInt(AD.claimId),
                         PERSON_NUMBER: 9000,
                         CLAIM_TYPE: AD.claimType,
-                        // CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
-                        // CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
-                        CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
-                        CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
+                        CLAIM_START_DATE: formatDateToISO(AD.claimStartDate),
+                        CLAIM_END_DATE: formatDateToISO(AD.claimEndDate),
+                        // CLAIM_START_DATE: new Date(AD.claimStartDate).toISOString(),
+                        // CLAIM_END_DATE: new Date(AD.claimEndDate).toISOString(),
                         TREATMENT_FOR: AD.treatmentFor,
                         TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
                         TREATMENT_TYPE: AD.treatmentType,
@@ -1128,7 +1128,7 @@ sap.ui.define([
                     console.time("Update claim");
                     // Set status to "Submitted"
                     claim.STATUS = "Submitted";
-                    return fetch('/odata/v4/my/CLAIM_DETAILS/' + id, {
+                    return fetch('./odata/v4/my/CLAIM_DETAILS/' + id, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1154,7 +1154,7 @@ sap.ui.define([
                 }
 
                 function saveClaimData(claim) {
-                    return fetch('/odata/v4/my/CLAIM_DETAILS', {
+                    return fetch('./odata/v4/my/CLAIM_DETAILS', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1211,8 +1211,176 @@ sap.ui.define([
                 //     // Convert the combined date string to ISO format
                 //     return claimDate.toISOString();
                 // }
+                function formatDateToISO(date) {
+                    // Parse the ISO date string to a Date object
+                    var claimDate = new Date(date);
+                
+                    // Format the date in the desired way
+                    let isoYear = claimDate.getFullYear();
+                    let isoMonth = (claimDate.getMonth() + 1).toString().padStart(2, '0');
+                    let isoDay = claimDate.getDate().toString().padStart(2, '0');
+                    let isoHours = claimDate.getHours().toString().padStart(2, '0');
+                    let isoMinutes = claimDate.getMinutes().toString().padStart(2, '0');
+                    let isoSeconds = claimDate.getSeconds().toString().padStart(2, '0');
+                
+                    // Return the formatted date
+                    return `${isoYear}-${isoMonth}-${isoDay}T${isoHours}:${isoMinutes}:${isoSeconds}.000Z`;
+                }
+                
             },
 
+
+            // handleSubmit: async function () {
+            //     var that = this;
+            //     var localModel = this.getView().getModel("localModel");
+            //     var AD = localModel.getData();
+            //     var allDetails = AD.dataValue;
+            //     var id = AD.dataValue[0].ID;
+            //     var currentDate = new Date().toISOString().split('T')[0];
+            //     var promises = [];
+            
+            //     var uploadedItem = AD.uploadedFileItem;
+            
+            //     await this._triggerCreateEvent(uploadedItem);
+            
+            //     allDetails.forEach(function (detail) {
+            //         var claim = {
+            //             CLAIM_ID: parseInt(AD.claimId),
+            //             PERSON_NUMBER: 9000,
+            //             CLAIM_TYPE: AD.claimType,
+            //             CLAIM_START_DATE: parseDateToISO(AD.claimStartDate),
+            //             CLAIM_END_DATE: parseDateToISO(AD.claimEndDate),
+            //             TREATMENT_FOR: AD.treatmentFor,
+            //             TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
+            //             TREATMENT_TYPE: AD.treatmentType,
+            //             SELECT_DEPENDENTS: AD.selectedDependent,
+            //             SUBMITTED_DATE: currentDate,
+            //             DOCTOR_NAME: detail.DOCTOR_NAME,
+            //             PATIENT_ID: detail.PATIENT_ID,
+            //             HOSPITAL_LOCATION: detail.HOSPITAL_LOCATION,
+            //             REQUESTED_AMOUNT: parseFloat(detail.REQUESTED_AMOUNT),
+            //             CONSULTANCY_CATEGORY: detail.CONSULTANCY_CATEGORY,
+            //             MEDICAL_STORE: detail.MEDICAL_STORE,
+            //             BILL_DATE: parseDateToISO(detail.BILL_DATE),
+            //             BILL_NO: detail.BILL_NO,
+            //             BILL_AMOUNT: parseFloat(detail.BILL_AMOUNT),
+            //             DISCOUNT: parseFloat(detail.DISCOUNT),
+            //             REVIEW: detail.REVIEW,
+            //             APPROVED_AMOUNT: 0,
+            //             POLICYNO: AD.Policynumber
+            //         };
+            
+            //         var promise = !isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined' ?
+            //             updateClaimData(claim, detail.ID) :
+            //             fetchMaxClaimId()
+            //                 .then(maxClaimId => {
+            //                     claim.CLAIM_ID = maxClaimId + 1;
+            //                     return saveClaimData(claim);
+            //                 })
+            //                 .catch(error => {
+            //                     throw error; // Propagate the error
+            //                 });
+            
+            //         promises.push(promise);
+            //     });
+            
+            //     Promise.all(promises)
+            //         .then(function () {
+            //             showMessageAndNavigate("Claim updated or saved successfully!");
+            //         })
+            //         .catch(function (error) {
+            //             handleError(error);
+            //         });
+            
+            //     function updateClaimData(claim, id) {
+            //         console.time("Update claim");
+            //         claim.STATUS = "Submitted";
+            //         return fetch('./odata/v4/my/CLAIM_DETAILS/' + id, {
+            //             method: 'PATCH',
+            //             headers: {
+            //                 'Content-Type': 'application/json'
+            //             },
+            //             body: JSON.stringify(claim)
+            //         })
+            //             .then(response => {
+            //                 console.timeEnd('Update claim');
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to update claim data');
+            //                 }
+            //                 var localModel = that.getView().getModel("localModel");
+            //                 var AD = localModel.getData();
+            //                 var allDetails = AD.dataValue;
+            //                 allDetails.forEach(detail => {
+            //                     if (detail.ID === id) {
+            //                         detail.STATUS = "Submitted";
+            //                     }
+            //                 });
+            //                 localModel.setData(AD);
+            //             });
+            //     }
+            
+            //     function saveClaimData(claim) {
+            //         return fetch('./odata/v4/my/CLAIM_DETAILS', {
+            //             method: 'POST',
+            //             headers: {
+            //                 'Content-Type': 'application/json'
+            //             },
+            //             body: JSON.stringify(claim)
+            //         })
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to save claim data');
+            //                 }
+            //             });
+            //     }
+            
+            //     function fetchMaxClaimId() {
+            //         return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
+            //                 }
+            //                 return response.json();
+            //             })
+            //             .then(data => {
+            //                 return data.value[0].CLAIM_ID;
+            //             });
+            //     }
+            
+            //     function showMessageAndNavigate(message) {
+            //         sap.m.MessageBox.success(message, {
+            //             onClose: function () {
+            //                 var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
+            //                 oRouter.navTo("Login");
+            //                 window.location.reload();
+            //             },
+            //         });
+            //     }
+            
+            //     function handleError(error) {
+            //         var errorMessage = "Error: " + error;
+            //         sap.m.MessageBox.error(errorMessage, {
+            //             onClose: function () {
+            //                 // Handle error closing if needed
+            //             },
+            //         });
+            //     }
+            
+            //     function parseDateToISO(dateStr) {
+            //         if (!dateStr || typeof dateStr !== 'string') return null;
+            //         let [day, month, year] = dateStr.split("/");
+            //         if (!day || !month || !year) {
+            //             console.error('Invalid date:', dateStr);
+            //             return null;
+            //         }
+            //         let date = new Date(year, month - 1, day);
+            //         if (isNaN(date.getTime())) {
+            //             console.error('Invalid date:', dateStr);
+            //             return null;
+            //         }
+            //         return date.toISOString();
+            //     }
+            // },            
 
             onTableUpdate: function () {
                 var oTable = this.getView().byId("reporttable");
@@ -1713,6 +1881,10 @@ sap.ui.define([
                 var endDate = new Date(oFormData.CLAIM_END_DATE);
                 var billDate = new Date(oFormData.BILL_DATE);
 
+
+               
+            
+
                 oClaimTypeComboBox.setSelectedKey(oFormData.CLAIM_TYPE);
                 oTreatmentTypeComboBox.setSelectedKey(oFormData.TREATMENT_TYPE);
                 oStartDatePicker.setValue(startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
@@ -1721,6 +1893,8 @@ sap.ui.define([
                 oTreatmentForOtherInput.setValue(oFormData.TREATMENT_FOR_OTHER);
                 oPolicyNumberSelect.setSelectedKey(oFormData.POLICY_NUMBER);
                 oSelectDependentsComboBox.setSelectedKey(oFormData.SELECT_DEPENDENTS);
+
+
                 // oAvailabilityCheckBox.setSelected(oFormData.AVAILABILITY);
                 // oPrescriptionCheckBox.setSelected(oFormData.PRESCRIPTION);
                 // oOriginalBillCheckBox.setSelected(oFormData.ORIGINAL_BILL);
