@@ -808,6 +808,11 @@
                                                     text="Delete"
                                                     press="onDeleteSelectedButton"
                                                 /> 
+                                                 <Button
+                                                    id="dSelectedButton"
+                                                    text="Download"
+                                                    press="onDownloadSelectedButton"
+                                                /> 
                                             </OverflowToolbar>
                                         </upload:toolbar>
                                         <upload:items>

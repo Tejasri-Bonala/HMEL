@@ -2099,8 +2099,56 @@ sap.ui.define([
                 } else {
                     sap.m.MessageToast.show("No item selected.");
                 }
+            },
+            onDownloadSelectedButton: function () {
+                var oUploadSet = this.byId("uploadSet");
+                var aSelectedItems = oUploadSet.getSelectedItems();
+            
+                if (aSelectedItems && aSelectedItems.length > 0) {
+                    var oSelectedItem = aSelectedItems[0];
+                    var oContext = oSelectedItem.getBindingContext("MainModel");
+            
+                    if (oContext) {
+                        var sFileId = oContext.getProperty("FILE_ID");
+            
+                        // Construct the URL to fetch the file content
+                        var imageUrl = "./odata/v4/my/DMS_ATT(" + sFileId + ")/FILE_CONTENT";
+            
+                        // Fetch the image data
+                        fetch(imageUrl, {
+                            method: "GET"
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            if (!blob || blob.size === 0) {
+                                throw new Error("Received empty blob");
+                            }
+                            // Create a blob URL for the image
+                            var objectURL = URL.createObjectURL(blob);
+                            // Create a temporary anchor element
+                            var a = document.createElement('a');
+                            a.href = objectURL;
+                            a.download = 'image.jpg'; // Set the filename for the download
+                            document.body.appendChild(a);
+                            a.click(); // Trigger the download
+                            document.body.removeChild(a); // Clean up
+                        })
+                        .catch(error => {
+                            console.error('Fetch Error:', error);
+                            sap.m.MessageToast.show("An error occurred while fetching the file content: " + error.message);
+                        });
+                    } else {
+                        sap.m.MessageToast.show("No binding context found for the selected item.");
+                    }
+                } else {
+                    sap.m.MessageToast.show("No item selected.");
+                }
             }
             
-
         });
     });
