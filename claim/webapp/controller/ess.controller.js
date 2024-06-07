@@ -51,6 +51,8 @@ sap.ui.define([
                 var oDateFormat = DateFormat.getDateTimeInstance({ pattern: "yyyy/MM/dd" });
                 this.updateCurrentDate(oDateFormat);
                 this.scheduleDailyUpdate(oDateFormat);
+
+
             },
 
 
@@ -66,47 +68,47 @@ sap.ui.define([
                 oRouter.navTo("RouteLogin");
             },
 
-            onTabSelect: function (oEvent) {
-                this.updateButtonVisibility();
+            // onTabSelect: function (oEvent) {
+            //     this.updateButtonVisibility();
 
-                var sSelectedKey = oEvent.getParameter("key");
+            //     var sSelectedKey = oEvent.getParameter("key");
 
-                // Check if moving from "Claim Details" to "Create" tab
-                if (this.sLastSelectedTab === "claimDetails") {
-                    // Validate fields in "Claim Details" tab
+            //     // Check if moving from "Claim Details" to "Create" tab
+            //     if (this.sLastSelectedTab === "claimDetails") {
+            //         // Validate fields in "Claim Details" tab
 
-                    // Save data from the current tab to the localModel
-                    this.saveDataTolocalModel();
-                    var aMissingFields = this.validateRequiredFields("claimDetails");
-                    if (aMissingFields.length > 0) {
-                        // Show an error message with missing required fields
-                        var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
-                        MessageBox.error(sErrorMessage);
-                        // If validation fails, prevent switching to the "Create" tab
-                        this.byId("myIconTabBar").setSelectedKey("claimDetails");
-                        return;
-                    }
-                }
-                else if (this.sLastSelectedTab === "Create") {
-                    var oCheckBoxAccept = this.byId("Accept");
-                    var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
+            //         // Save data from the current tab to the localModel
+            //         this.saveDataTolocalModel();
+            //         var aMissingFields = this.validateRequiredFields("claimDetails");
+            //         if (aMissingFields.length > 0) {
+            //             // Show an error message with missing required fields
+            //             var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
+            //             MessageBox.error(sErrorMessage);
+            //             // If validation fails, prevent switching to the "Create" tab
+            //             this.byId("myIconTabBar").setSelectedKey("claimDetails");
+            //             return;
+            //         }
+            //     }
+            //     else if (this.sLastSelectedTab === "Create") {
+            //         var oCheckBoxAccept = this.byId("Accept");
+            //         var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
 
-                    if (!bIsCheckBoxChecked) {
-                        // CheckBox is not checked, show an error message
-                        MessageBox.error("Please acknowledge and accept the terms and conditions.");
-                        this.byId("myIconTabBar").setSelectedKey("Create");
-                        return;
-                    }
-                }
+            //         if (!bIsCheckBoxChecked) {
+            //             // CheckBox is not checked, show an error message
+            //             MessageBox.error("Please acknowledge and accept the terms and conditions.");
+            //             this.byId("myIconTabBar").setSelectedKey("Create");
+            //             return;
+            //         }
+            //     }
 
-                // Continue with the normal logic for other tabs
-                this.sLastSelectedTab = sSelectedKey;
+            //     // Continue with the normal logic for other tabs
+            //     this.sLastSelectedTab = sSelectedKey;
 
-                // Your existing logic for the selected tab
-                if (sSelectedKey === "review") {
-                    this.updateTotalRequestedAmount();
-                }
-            },
+            //     // Your existing logic for the selected tab
+            //     if (sSelectedKey === "review") {
+            //         this.updateTotalRequestedAmount();
+            //     }
+            // },
 
             validateAndSwitchTab: function (currentTab, nextTab) {
                 var aMissingFields = this.validateRequiredFields(currentTab);
@@ -410,14 +412,13 @@ sap.ui.define([
                 olocalModel.setProperty("/claimId", this.byId("claimIdLabel").getText());
 
                 olocalModel.setProperty("/Policynumber", this.byId("PolicyNumber").getSelectedKey());
-                
-                if (item)
-                {
+
+                if (item) {
                     let fileName = item.getFileName();
                     olocalModel.setProperty("/uploadedFileName", fileName);
                     olocalModel.setProperty("/uploadedFileItem", item);
                 }
-                
+
 
                 // var claimIdInput = this.byId("claimIdInput");
                 // var claimId = claimIdInput.getValue().replace(/\D/g, ''); 
@@ -1057,7 +1058,7 @@ sap.ui.define([
                 }
             },
 
-           
+
             handleSubmit: async function () {
                 var that = this;
                 var localModel = this.getView().getModel("localModel");
@@ -1097,8 +1098,8 @@ sap.ui.define([
                         DISCOUNT: parseFloat(detail.DISCOUNT),
                         REVIEW: detail.REVIEW,
                         APPROVED_AMOUNT: 0,
-                        POLICYNO:AD.Policynumber
-                        
+                        POLICYNO: AD.Policynumber
+
 
                     };
 
@@ -1202,185 +1203,47 @@ sap.ui.define([
                 }
 
                 // function formatDateToISO(date) {
-                //     let [day, month, year] = date.split("/");
-                //     var claimDate = new Date();
-                //     claimDate.setFullYear(year);
-                //     claimDate.setMonth(parseInt(month) - 1);
-                //     claimDate.setDate(day);
+                //     // Parse the ISO date string to a Date object
+                //     var claimDate = new Date(date);
 
-                //     // Convert the combined date string to ISO format
+                //     // Format the date in the desired way
+                //     let isoYear = claimDate.getFullYear();
+                //     let isoMonth = (claimDate.getMonth() + 1).toString().padStart(2, '0');
+                //     let isoDay = claimDate.getDate().toString().padStart(2, '0');
+                //     let isoHours = claimDate.getHours().toString().padStart(2, '0');
+                //     let isoMinutes = claimDate.getMinutes().toString().padStart(2, '0');
+                //     let isoSeconds = claimDate.getSeconds().toString().padStart(2, '0');
+
+                //     // Return the formatted date
+                //     return `${isoYear}-${isoMonth}-${isoDay}T${isoHours}:${isoMinutes}:${isoSeconds}.000Z`;
+                // }
+
+                function formatDateToISO(date) {
+                    let [month, day, year] = date.split("/");
+                    var claimDate = new Date();
+                    // claimDate.setFullYear(year);
+                    claimDate.setMonth(parseInt(month) - 1);
+                    claimDate.setDate(day);
+
+                    // Convert the combined date string to ISO format with time component
+                    return claimDate.toISOString();
+                }
+
+                // function formatDateToISO(date) {
+                //     // Parse the date string "Month Day, Year"
+                //     var claimDate = new Date(date);
+
+                //     if (isNaN(claimDate)) {
+                //         throw new Error('Invalid date format');
+                //     }
+
+                //     // Convert the date to ISO format
                 //     return claimDate.toISOString();
                 // }
-                function formatDateToISO(date) {
-                    // Parse the ISO date string to a Date object
-                    var claimDate = new Date(date);
-                
-                    // Format the date in the desired way
-                    let isoYear = claimDate.getFullYear();
-                    let isoMonth = (claimDate.getMonth() + 1).toString().padStart(2, '0');
-                    let isoDay = claimDate.getDate().toString().padStart(2, '0');
-                    let isoHours = claimDate.getHours().toString().padStart(2, '0');
-                    let isoMinutes = claimDate.getMinutes().toString().padStart(2, '0');
-                    let isoSeconds = claimDate.getSeconds().toString().padStart(2, '0');
-                
-                    // Return the formatted date
-                    return `${isoYear}-${isoMonth}-${isoDay}T${isoHours}:${isoMinutes}:${isoSeconds}.000Z`;
-                }
-                
+
+
             },
 
-
-            // handleSubmit: async function () {
-            //     var that = this;
-            //     var localModel = this.getView().getModel("localModel");
-            //     var AD = localModel.getData();
-            //     var allDetails = AD.dataValue;
-            //     var id = AD.dataValue[0].ID;
-            //     var currentDate = new Date().toISOString().split('T')[0];
-            //     var promises = [];
-            
-            //     var uploadedItem = AD.uploadedFileItem;
-            
-            //     await this._triggerCreateEvent(uploadedItem);
-            
-            //     allDetails.forEach(function (detail) {
-            //         var claim = {
-            //             CLAIM_ID: parseInt(AD.claimId),
-            //             PERSON_NUMBER: 9000,
-            //             CLAIM_TYPE: AD.claimType,
-            //             CLAIM_START_DATE: parseDateToISO(AD.claimStartDate),
-            //             CLAIM_END_DATE: parseDateToISO(AD.claimEndDate),
-            //             TREATMENT_FOR: AD.treatmentFor,
-            //             TREATMENT_FOR_IF_OTHERS: detail.treatmentForOther,
-            //             TREATMENT_TYPE: AD.treatmentType,
-            //             SELECT_DEPENDENTS: AD.selectedDependent,
-            //             SUBMITTED_DATE: currentDate,
-            //             DOCTOR_NAME: detail.DOCTOR_NAME,
-            //             PATIENT_ID: detail.PATIENT_ID,
-            //             HOSPITAL_LOCATION: detail.HOSPITAL_LOCATION,
-            //             REQUESTED_AMOUNT: parseFloat(detail.REQUESTED_AMOUNT),
-            //             CONSULTANCY_CATEGORY: detail.CONSULTANCY_CATEGORY,
-            //             MEDICAL_STORE: detail.MEDICAL_STORE,
-            //             BILL_DATE: parseDateToISO(detail.BILL_DATE),
-            //             BILL_NO: detail.BILL_NO,
-            //             BILL_AMOUNT: parseFloat(detail.BILL_AMOUNT),
-            //             DISCOUNT: parseFloat(detail.DISCOUNT),
-            //             REVIEW: detail.REVIEW,
-            //             APPROVED_AMOUNT: 0,
-            //             POLICYNO: AD.Policynumber
-            //         };
-            
-            //         var promise = !isNaN(claim.CLAIM_ID) && typeof claim.CLAIM_ID !== 'undefined' ?
-            //             updateClaimData(claim, detail.ID) :
-            //             fetchMaxClaimId()
-            //                 .then(maxClaimId => {
-            //                     claim.CLAIM_ID = maxClaimId + 1;
-            //                     return saveClaimData(claim);
-            //                 })
-            //                 .catch(error => {
-            //                     throw error; // Propagate the error
-            //                 });
-            
-            //         promises.push(promise);
-            //     });
-            
-            //     Promise.all(promises)
-            //         .then(function () {
-            //             showMessageAndNavigate("Claim updated or saved successfully!");
-            //         })
-            //         .catch(function (error) {
-            //             handleError(error);
-            //         });
-            
-            //     function updateClaimData(claim, id) {
-            //         console.time("Update claim");
-            //         claim.STATUS = "Submitted";
-            //         return fetch('./odata/v4/my/CLAIM_DETAILS/' + id, {
-            //             method: 'PATCH',
-            //             headers: {
-            //                 'Content-Type': 'application/json'
-            //             },
-            //             body: JSON.stringify(claim)
-            //         })
-            //             .then(response => {
-            //                 console.timeEnd('Update claim');
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to update claim data');
-            //                 }
-            //                 var localModel = that.getView().getModel("localModel");
-            //                 var AD = localModel.getData();
-            //                 var allDetails = AD.dataValue;
-            //                 allDetails.forEach(detail => {
-            //                     if (detail.ID === id) {
-            //                         detail.STATUS = "Submitted";
-            //                     }
-            //                 });
-            //                 localModel.setData(AD);
-            //             });
-            //     }
-            
-            //     function saveClaimData(claim) {
-            //         return fetch('./odata/v4/my/CLAIM_DETAILS', {
-            //             method: 'POST',
-            //             headers: {
-            //                 'Content-Type': 'application/json'
-            //             },
-            //             body: JSON.stringify(claim)
-            //         })
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to save claim data');
-            //                 }
-            //             });
-            //     }
-            
-            //     function fetchMaxClaimId() {
-            //         return fetch("./odata/v4/my/CLAIM_DETAILS?$orderby=CLAIM_ID desc&$top=1")
-            //             .then(response => {
-            //                 if (!response.ok) {
-            //                     throw new Error('Failed to fetch maximum CLAIM_ID');
-            //                 }
-            //                 return response.json();
-            //             })
-            //             .then(data => {
-            //                 return data.value[0].CLAIM_ID;
-            //             });
-            //     }
-            
-            //     function showMessageAndNavigate(message) {
-            //         sap.m.MessageBox.success(message, {
-            //             onClose: function () {
-            //                 var oRouter = sap.ui.core.UIComponent.getRouterFor(that);
-            //                 oRouter.navTo("Login");
-            //                 window.location.reload();
-            //             },
-            //         });
-            //     }
-            
-            //     function handleError(error) {
-            //         var errorMessage = "Error: " + error;
-            //         sap.m.MessageBox.error(errorMessage, {
-            //             onClose: function () {
-            //                 // Handle error closing if needed
-            //             },
-            //         });
-            //     }
-            
-            //     function parseDateToISO(dateStr) {
-            //         if (!dateStr || typeof dateStr !== 'string') return null;
-            //         let [day, month, year] = dateStr.split("/");
-            //         if (!day || !month || !year) {
-            //             console.error('Invalid date:', dateStr);
-            //             return null;
-            //         }
-            //         let date = new Date(year, month - 1, day);
-            //         if (isNaN(date.getTime())) {
-            //             console.error('Invalid date:', dateStr);
-            //             return null;
-            //         }
-            //         return date.toISOString();
-            //     }
-            // },            
 
             onTableUpdate: function () {
                 var oTable = this.getView().byId("reporttable");
@@ -1777,8 +1640,8 @@ sap.ui.define([
             },
 
 
-            
-           
+
+
             ondetailarrow: function (oEvent) {
                 var sClaimId = oEvent.getSource().getBindingContext("MainModel").getProperty("CLAIM_ID");
                 this.getClaimDetails(sClaimId);
@@ -1882,8 +1745,8 @@ sap.ui.define([
                 var billDate = new Date(oFormData.BILL_DATE);
 
 
-               
-            
+
+
 
                 oClaimTypeComboBox.setSelectedKey(oFormData.CLAIM_TYPE);
                 oTreatmentTypeComboBox.setSelectedKey(oFormData.TREATMENT_TYPE);
@@ -1915,38 +1778,38 @@ sap.ui.define([
                 // Return the numeric-only value
                 return sNumericOnlyValue;
             },
-           
+
 
             onAfterItemAdded: function (oEvent) {
                 var item = oEvent.getParameter("item");
-                var policyNumber = this.byId("PolicyNumber").getSelectedKey(); 
-    
+                var policyNumber = this.byId("PolicyNumber").getSelectedKey();
+
                 if (!policyNumber) {
                     sap.m.MessageToast.show("Please select a policy number.");
                     return;
                 }
-    
+
                 // Set the policy number to the item before triggering the CREATE event
                 item.policyNumber = policyNumber;
 
                 this.saveDataTolocalModel(item);
 
-    
+
                 // this._triggerCreateEvent(item);
             },
 
             // onAfterItemAdded: function (oEvent) {
             //     var item = oEvent.getParameter("item");
             //     var policyNumber = this.byId("PolicyNumber").getSelectedKey(); // Get selected policy number
-            
+
             //     if (!policyNumber) {
             //         sap.m.MessageToast.show("Please select a policy number.");
             //         return;
             //     }
-            
+
             //     // Set the policy number to the item before triggering the CREATE event
             //     item.policyNumber = policyNumber;
-            
+
             //     // Update enableEdit and visibleEdit properties in the model
             //     var oModel = this.getView().getModel("MainModel");
             //     var aItems = oModel.getProperty("/DMS_ATT");
@@ -1956,29 +1819,29 @@ sap.ui.define([
             //         oModel.setProperty(sItemId + "/enableEdit", item.getEnabledEdit());
             //         oModel.setProperty(sItemId + "/visibleEdit", item.getVisibleEdit());
             //     }
-            
+
             //     this._triggerCreateEvent(item);
             // },
-            
-    
+
+
             onUploadCompleted: function (oEvent) {
                 var oUploadSet = this.byId("uploadSet");
                 oUploadSet.removeAllIncompleteItems();
                 oUploadSet.getBinding("items").refresh();
             },
-    
+
             // onOpenPressed: function (oEvent) {
             //     oEvent.preventDefault();
-			// 	var item = oEvent.getSource();
-			// 	this._download(item)
-			// 		.then((blob) => {
-			// 			var url = window.URL.createObjectURL(blob);
-			// 			//open in the browser
-			// 			window.open(url);					
-			// 		})
-			// 		.catch((err)=> {
-			// 			console.log(err);
-			// 		});
+            // 	var item = oEvent.getSource();
+            // 	this._download(item)
+            // 		.then((blob) => {
+            // 			var url = window.URL.createObjectURL(blob);
+            // 			//open in the browser
+            // 			window.open(url);					
+            // 		})
+            // 		.catch((err)=> {
+            // 			console.log(err);
+            // 		});
             // },
             onOpenPressed: function (oEvent) {
 				oEvent.preventDefault();
@@ -2002,37 +1865,36 @@ sap.ui.define([
 						console.log(err);
 					});					
 			},
-            
-            _triggerCreateEvent: function(item) {
+            _triggerCreateEvent: function (item) {
                 var policyNumber = this.byId("PolicyNumber").getSelectedKey();
-            
+
                 if (!policyNumber) {
                     console.error("No policy number selected");
                     sap.m.MessageToast.show("Please select a policy number.");
                     return;
                 }
-            
+
                 var fileName = item.getFileName();
                 var mediaType = item.getMediaType();
-            
+
                 if (!fileName || !mediaType) {
                     console.error("File name or media type is missing");
                     sap.m.MessageToast.show("File name or media type is missing.");
                     return;
                 }
-            
+
                 var file = item.getFileObject();
-            
+
                 if (!file) {
                     console.error("File object is missing");
                     sap.m.MessageToast.show("File object is missing.");
                     return;
                 }
-            
+
                 var reader = new FileReader();
                 reader.onload = (e) => {
                     var fileContent = e.target.result.split(",")[1]; // Get base64 content
-            
+
                     var data = {
                         "UPLOADED_DATE": new Date().toISOString(),
                         "UPLOADED_BY": "ASHWIN",
@@ -2044,9 +1906,9 @@ sap.ui.define([
                         "POLICYNO": policyNumber,
                         "FILE_CONTENT": fileContent
                     };
-            
+
                     console.log("Data to be sent:", data);
-            
+
                     var settings = {
                         url: "./odata/v4/my/DMS_ATT",
                         method: "POST",
@@ -2055,7 +1917,7 @@ sap.ui.define([
                         },
                         data: JSON.stringify(data)
                     };
-            
+
                     $.ajax(settings)
                         .done((results, textStatus, request) => {
                             console.log("File uploaded successfully:", results);
@@ -2067,18 +1929,18 @@ sap.ui.define([
                         });
                 };
                 reader.readAsDataURL(file);
-            },            
+            },
 
-           
+
             _uploadContent: function (item, policyNumber) {
                 if (!policyNumber) {
                     console.error("No policy number selected for upload");
                     return;
                 }
-    
+
                 var url = `/MEDICAL CLAIM/TEST REPORT/${policyNumber}`;
                 item.setUploadUrl(url);
-    
+
                 var oUploadSet = this.byId("uploadSet");
                 oUploadSet.setHttpRequestMethod("POST");
                 oUploadSet.uploadItem(item);
@@ -2103,30 +1965,142 @@ sap.ui.define([
 				});						
 			},
             formatThumbnailUrl: function (mediaType) {
-				var iconUrl;
-				switch (mediaType) {
-					case "image/png":
-						iconUrl = "sap-icon://card";
-						break;
-					case "text/plain":
-						iconUrl = "sap-icon://document-text";
-						break;
-					case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-						iconUrl = "sap-icon://excel-attachment";
-						break;
-					case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-						iconUrl = "sap-icon://doc-attachment";
-						break;
-					case "application/pdf":
-						iconUrl = "sap-icon://pdf-attachment";
-						break;
-					default:
-						iconUrl = "sap-icon://attachment";
-				}
-				return iconUrl;
-			},
+                var iconUrl;
+                switch (mediaType) {
+                    case "image/png":
+                        iconUrl = "sap-icon://card";
+                        break;
+                    case "text/plain":
+                        iconUrl = "sap-icon://document-text";
+                        break;
+                    case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                        iconUrl = "sap-icon://excel-attachment";
+                        break;
+                    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                        iconUrl = "sap-icon://doc-attachment";
+                        break;
+                    case "application/pdf":
+                        iconUrl = "sap-icon://pdf-attachment";
+                        break;
+                    default:
+                        iconUrl = "sap-icon://attachment";
+                }
+                return iconUrl;
+            },
 
-            
+            onDeleteSelectedButton: function (oEvent) {
+                var oUploadSet = this.byId("uploadSet");
+                var selectedItems = oUploadSet.getSelectedItems();
+
+                if (selectedItems.length === 0) {
+                    sap.m.MessageToast.show("Please select at least one item to delete.");
+                    return;
+                }
+
+                var deletePromises = selectedItems.map(function (item) {
+                    return new Promise(function (resolve, reject) {
+                        // Assuming the URL is the identifier for deletion
+                        var fileUrl = item.getUrl();
+
+                        $.ajax({
+                            url: fileUrl,
+                            method: 'DELETE',
+                            success: function () {
+                                // Remove the item from the UploadSet
+                                oUploadSet.removeItem(item);
+                                resolve();
+                            },
+                            error: function (xhr, textStatus, errorThrown) {
+                                console.error("Error deleting file:", xhr.status, xhr.statusText, xhr.responseText);
+                                sap.m.MessageToast.show("Error deleting file: " + xhr.responseText);
+                                reject();
+                            }
+                        });
+                    });
+                });
+
+                Promise.all(deletePromises)
+                    .then(function () {
+                        sap.m.MessageToast.show("Selected items deleted successfully.");
+                        oUploadSet.getBinding("items").refresh(); // Refresh the binding if necessary
+                    })
+                    .catch(function (error) {
+                        console.error("Error deleting one or more items.", error);
+                    });
+            },
           
+
+            // onOpenSelectedButton: function () {
+            //     var oUploadSet = this.byId("uploadSet");
+            //     var aSelectedItems = oUploadSet.getSelectedItems();
+            
+            //     if (aSelectedItems && aSelectedItems.length > 0) {
+            //         var oSelectedItem = aSelectedItems[0];
+            //         // Get the binding context of the selected item
+            //         var oContext = oSelectedItem.getBindingContext("MainModel");
+            
+            //         if (oContext) {
+            //             // Get the FILE_ID directly from the model data
+            //             var sFileId = oContext.getProperty("FILE_ID");
+            
+            //             if (sFileId) {
+            //                 // Perform your desired action with the file ID
+            //                 sap.m.MessageToast.show("Selected File ID: " + sFileId);
+            //             } else {
+            //                 sap.m.MessageToast.show("No file ID found for the selected item.");
+            //             }
+            //         } else {
+            //             sap.m.MessageToast.show("No binding context found for the selected item.");
+            //         }
+            //     } else {
+            //         sap.m.MessageToast.show("No item selected.");
+            //     }
+            // }
+            onOpenSelectedButton: function () {
+                var oUploadSet = this.byId("uploadSet");
+                var aSelectedItems = oUploadSet.getSelectedItems();
+            
+                if (aSelectedItems && aSelectedItems.length > 0) {
+                    var oSelectedItem = aSelectedItems[0];
+                    var oContext = oSelectedItem.getBindingContext("MainModel");
+            
+                    if (oContext) {
+                        var sFileId = oContext.getProperty("FILE_ID");
+            
+                        // Construct the URL to fetch the file content
+                        var imageUrl = "./odata/v4/my/DMS_ATT(" + sFileId + ")/FILE_CONTENT";
+            
+                        // Fetch the image data
+                        fetch(imageUrl, {
+                            method: "GET"
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            if (!blob || blob.size === 0) {
+                                throw new Error("Received empty blob");
+                            }
+                            var objectURL = URL.createObjectURL(blob);
+                            // Open the image in a new tab
+                            window.open(objectURL, '_blank');
+                            sap.m.MessageToast.show("Selected File ID: " + sFileId);
+                        })
+                        .catch(error => {
+                            console.error('Fetch Error:', error);
+                            sap.m.MessageToast.show("An error occurred while fetching the file content. Please try again later.");
+                        });
+                    } else {
+                        sap.m.MessageToast.show("No binding context found for the selected item.");
+                    }
+                } else {
+                    sap.m.MessageToast.show("No item selected.");
+                }
+            }
+            
+
         });
     });

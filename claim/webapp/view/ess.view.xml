@@ -144,7 +144,7 @@
         filters: [{ path: 'CSFLD', operator: 'EQ', value1: 'C40T4' }]
     }"
                                                                 id="CT"
-                                                                width="400px"
+                                                                width="350px"
                                                             >
                                                                 <core:Item
                                                                     key="{MainModel>SOVAL}"
@@ -166,7 +166,7 @@
         filters: [{ path: 'CSFLD', operator: 'EQ', value1: 'C20T5' }]
     }"
                                                                 id="TT"
-                                                                width="400px"
+                                                                width="350px"
                                                             >
                                                                 <core:Item
                                                                     key="{MainModel>SOVAL}"
@@ -189,7 +189,7 @@
                                                             />
                                                             <DatePicker
                                                                 id="startDatePicker1"
-                                                                width="400px"
+                                                                width="350px"
                                                                 value="{/startDate}"
                                                                 change="handleStartDateChange"
                                                             />
@@ -204,7 +204,7 @@
                                                             />
                                                             <DatePicker
                                                                 id="endDatePicker1"
-                                                                width="400px"
+                                                                width="350px"
                                                                 value="{/endDate}"
                                                                 change="handleEndDateChange"
                                                             />
@@ -227,7 +227,7 @@
         filters: [{ path: 'CSFLD', operator: 'EQ', value1: 'C40T5' }]
     }"
                                                                 id="TF"
-                                                                width="400px"
+                                                                width="350px"
                                                                 change="onTreatmentChange"
                                                             >
                                                                 <core:Item
@@ -247,7 +247,7 @@
                                                                 id="TreatmentForOther"
                                                                 liveChange="ValidateClaimFields"
                                                                 valueState="{/productNameState}"
-                                                                width="400px"
+                                                                width="350px"
                                                             />
                                                         </VBox>
                                                     </f:fields>
@@ -267,7 +267,7 @@
                                                                  path: 'MainModel>/ZHRMED_POLICY'
                                                                  }"
                                                                 id="PolicyNumber"
-                                                                width="400px"
+                                                                width="350px"
                                                             >
                                                                 <core:Item
                                                                     key="{MainModel>POLICYNO}"
@@ -294,7 +294,7 @@
         filters: [{ path: 'SOVAL', operator: 'EQ', value1: 'SELF' }]
     }"
                                                                 id="SD"
-                                                                width="400px"
+                                                                width="350px"
                                                             >
                                                                 <core:Item
                                                                     key="{MainModel>SOVAL}"
@@ -800,13 +800,13 @@
 
                                                 <Button
                                                     id="downloadSelectedButton"
-                                                    text="Download"
-                                                    press="onDownloadSelectedButton"
+                                                    text="Open"
+                                                    press="onOpenSelectedButton"
                                                 />
                                                  <Button
                                                     id="deleteSelectedButton"
                                                     text="Delete"
-                                                    press="onDownloadSelectedButton"
+                                                    press="onDeleteSelectedButton"
                                                 /> 
                                             </OverflowToolbar>
                                         </upload:toolbar>
@@ -816,19 +816,30 @@
                                                 mediaType="{MainModle>MEDIA_TYPE}"
                                                 enabledEdit="true"
                                                 visibleEdit="true"
+                                               
                                                 openPressed="onOpenPressed"
-                                                url="{MainModel>FILE_URL}"
+                                                
+                                                visibleRemove="false" 
                                                 thumbnailUrl="{
 								path: 'mediaType',
 								formatter: '.formatThumbnailUrl'
 							}"
                                             >
+                                           
                                                 <upload:attributes>
                                                     <ObjectAttribute
                                                         text="{MainModel>UPLOADED_DATE}"
                                                         active="false"
                                                     />
+                                                    <ObjectAttribute
+                                                        text="{MainModel>FILE_ID}"
+                                                        active="false"
+                                                        visible="false"
+                                                        id="file"
+                                                    />
+                                                    
                                                 </upload:attributes>
+                                                 
                                             </upload:UploadSetItem>
                                         </upload:items>
                                     </upload:UploadSet>
