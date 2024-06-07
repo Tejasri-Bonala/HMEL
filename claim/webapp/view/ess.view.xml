@@ -780,7 +780,6 @@
                                 >
                                     <upload:UploadSet
                                         id="uploadSet"
-                                       
                                         instantUpload="false"
                                         uploadEnabled="true"
                                         terminationEnabled="false"
@@ -821,9 +820,7 @@
                                                 mediaType="{MainModle>MEDIA_TYPE}"
                                                 enabledEdit="true"
                                                 visibleEdit="true"
-                                               
                                                 openPressed="onOpenPressed"
-                                                
                                                 visibleRemove="false" 
                                                 thumbnailUrl="{
 								path: 'mediaType',

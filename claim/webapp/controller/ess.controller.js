@@ -68,47 +68,47 @@ sap.ui.define([
                 oRouter.navTo("RouteLogin");
             },
 
-            onTabSelect: function (oEvent) {
-                this.updateButtonVisibility();
+            // onTabSelect: function (oEvent) {
+            //     this.updateButtonVisibility();
 
-                var sSelectedKey = oEvent.getParameter("key");
+            //     var sSelectedKey = oEvent.getParameter("key");
 
-                // Check if moving from "Claim Details" to "Create" tab
-                if (this.sLastSelectedTab === "claimDetails") {
-                    // Validate fields in "Claim Details" tab
+            //     // Check if moving from "Claim Details" to "Create" tab
+            //     if (this.sLastSelectedTab === "claimDetails") {
+            //         // Validate fields in "Claim Details" tab
 
-                    // Save data from the current tab to the localModel
-                    this.saveDataTolocalModel();
-                    var aMissingFields = this.validateRequiredFields("claimDetails");
-                    if (aMissingFields.length > 0) {
-                        // Show an error message with missing required fields
-                        var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
-                        MessageBox.error(sErrorMessage);
-                        // If validation fails, prevent switching to the "Create" tab
-                        this.byId("myIconTabBar").setSelectedKey("claimDetails");
-                        return;
-                    }
-                }
-                else if (this.sLastSelectedTab === "Create") {
-                    var oCheckBoxAccept = this.byId("Accept");
-                    var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
+            //         // Save data from the current tab to the localModel
+            //         this.saveDataTolocalModel();
+            //         var aMissingFields = this.validateRequiredFields("claimDetails");
+            //         if (aMissingFields.length > 0) {
+            //             // Show an error message with missing required fields
+            //             var sErrorMessage = "Please fill in all required fields in Claim Details tab: " + aMissingFields.join(", ");
+            //             MessageBox.error(sErrorMessage);
+            //             // If validation fails, prevent switching to the "Create" tab
+            //             this.byId("myIconTabBar").setSelectedKey("claimDetails");
+            //             return;
+            //         }
+            //     }
+            //     else if (this.sLastSelectedTab === "Create") {
+            //         var oCheckBoxAccept = this.byId("Accept");
+            //         var bIsCheckBoxChecked = oCheckBoxAccept.getSelected();
 
-                    if (!bIsCheckBoxChecked) {
-                        // CheckBox is not checked, show an error message
-                        MessageBox.error("Please acknowledge and accept the terms and conditions.");
-                        this.byId("myIconTabBar").setSelectedKey("Create");
-                        return;
-                    }
-                }
+            //         if (!bIsCheckBoxChecked) {
+            //             // CheckBox is not checked, show an error message
+            //             MessageBox.error("Please acknowledge and accept the terms and conditions.");
+            //             this.byId("myIconTabBar").setSelectedKey("Create");
+            //             return;
+            //         }
+            //     }
 
-                // Continue with the normal logic for other tabs
-                this.sLastSelectedTab = sSelectedKey;
+            //     // Continue with the normal logic for other tabs
+            //     this.sLastSelectedTab = sSelectedKey;
 
-                // Your existing logic for the selected tab
-                if (sSelectedKey === "review") {
-                    this.updateTotalRequestedAmount();
-                }
-            },
+            //     // Your existing logic for the selected tab
+            //     if (sSelectedKey === "review") {
+            //         this.updateTotalRequestedAmount();
+            //     }
+            // },
 
             validateAndSwitchTab: function (currentTab, nextTab) {
                 var aMissingFields = this.validateRequiredFields(currentTab);
@@ -1780,27 +1780,9 @@ sap.ui.define([
             },
 
 
-            onAfterItemAdded: function (oEvent) {
-                var item = oEvent.getParameter("item");
-                var policyNumber = this.byId("PolicyNumber").getSelectedKey();
-
-                if (!policyNumber) {
-                    sap.m.MessageToast.show("Please select a policy number.");
-                    return;
-                }
-
-                // Set the policy number to the item before triggering the CREATE event
-                item.policyNumber = policyNumber;
-
-                this.saveDataTolocalModel(item);
-
-
-                // this._triggerCreateEvent(item);
-            },
-
             // onAfterItemAdded: function (oEvent) {
             //     var item = oEvent.getParameter("item");
-            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey(); // Get selected policy number
+            //     var policyNumber = this.byId("PolicyNumber").getSelectedKey();
 
             //     if (!policyNumber) {
             //         sap.m.MessageToast.show("Please select a policy number.");
@@ -1810,20 +1792,49 @@ sap.ui.define([
             //     // Set the policy number to the item before triggering the CREATE event
             //     item.policyNumber = policyNumber;
 
-            //     // Update enableEdit and visibleEdit properties in the model
-            //     var oModel = this.getView().getModel("MainModel");
-            //     var aItems = oModel.getProperty("/DMS_ATT");
-            //     var sItemId = item.getId(); // Assuming the item ID uniquely identifies the item in the model
-            //     var oItemData = aItems.find(item => item.id === sItemId); // Find the corresponding item in the model
-            //     if (oItemData) {
-            //         oModel.setProperty(sItemId + "/enableEdit", item.getEnabledEdit());
-            //         oModel.setProperty(sItemId + "/visibleEdit", item.getVisibleEdit());
-            //     }
+            //     this.saveDataTolocalModel(item);
 
-            //     this._triggerCreateEvent(item);
+
+            //     // this._triggerCreateEvent(item);
             // },
 
-
+            onAfterItemAdded: function (oEvent) {
+                var item = oEvent.getParameter("item");
+                var policyNumber = this.byId("PolicyNumber").getSelectedKey();
+            
+                if (!policyNumber) {
+                    sap.m.MessageToast.show("Please select a policy number.");
+                    return;
+                }
+            
+                var fileName = item.getFileName();
+                var mediaType = item.getMediaType();
+            
+                // Define allowed media types
+                var allowedMediaTypes = [
+                    "image/png",
+                    "image/jpeg",
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "application/msword"
+                ];
+            
+                // Check if the media type is allowed
+                if (!allowedMediaTypes.includes(mediaType)) {
+                    sap.m.MessageToast.show("Unsupported file type. Please upload PNG, JPEG, PDF, or Word files only.");
+                    // Remove the item from the UploadSet
+                    var oUploadSet = this.byId("uploadSet");
+                    oUploadSet.removeItem(item);
+                    return;
+                }
+            
+                // Set the policy number to the item before triggering the CREATE event
+                item.policyNumber = policyNumber;
+            
+                // Save the data to the local model
+                this.saveDataTolocalModel(item);
+            },            
+            
             onUploadCompleted: function (oEvent) {
                 var oUploadSet = this.byId("uploadSet");
                 oUploadSet.removeAllIncompleteItems();
@@ -1865,6 +1876,8 @@ sap.ui.define([
 						console.log(err);
 					});					
 			},
+           
+            
             _triggerCreateEvent: function (item) {
                 var policyNumber = this.byId("PolicyNumber").getSelectedKey();
 
@@ -1931,6 +1944,7 @@ sap.ui.define([
                 reader.readAsDataURL(file);
             },
 
+            
 
             _uploadContent: function (item, policyNumber) {
                 if (!policyNumber) {
@@ -1968,7 +1982,7 @@ sap.ui.define([
                 var iconUrl;
                 switch (mediaType) {
                     case "image/png":
-                        iconUrl = "sap-icon://card";
+                        iconUrl = "sap-icon://picture";
                         break;
                     case "text/plain":
                         iconUrl = "sap-icon://document-text";
@@ -2133,7 +2147,7 @@ sap.ui.define([
                             // Create a temporary anchor element
                             var a = document.createElement('a');
                             a.href = objectURL;
-                            a.download = 'image.jpg'; // Set the filename for the download
+                            a.download = ''; // Set the filename for the download
                             document.body.appendChild(a);
                             a.click(); // Trigger the download
                             document.body.removeChild(a); // Clean up
@@ -2148,7 +2162,8 @@ sap.ui.define([
                 } else {
                     sap.m.MessageToast.show("No item selected.");
                 }
-            }
+            },
+            
             
         });
     });
