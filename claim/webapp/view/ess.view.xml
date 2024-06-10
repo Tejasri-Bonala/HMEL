@@ -782,9 +782,11 @@
                                         id="uploadSet"
                                         instantUpload="false"
                                         uploadEnabled="true"
+                                       
                                         terminationEnabled="false"
                                         afterItemAdded="onAfterItemAdded"
                                         uploadCompleted="onUploadCompleted"
+                                        mode="SingleSelect" 
                                         items="{
 								path: 'MainModel>/DMS_ATT',
                                  sorter: {

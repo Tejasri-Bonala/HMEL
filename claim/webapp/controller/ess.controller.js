@@ -2002,47 +2002,49 @@ sap.ui.define([
                 return iconUrl;
             },
 
-            onDeleteSelectedButton: function (oEvent) {
+            onDeleteSelectedButton: function () {
                 var oUploadSet = this.byId("uploadSet");
-                var selectedItems = oUploadSet.getSelectedItems();
-
-                if (selectedItems.length === 0) {
-                    sap.m.MessageToast.show("Please select at least one item to delete.");
-                    return;
-                }
-
-                var deletePromises = selectedItems.map(function (item) {
-                    return new Promise(function (resolve, reject) {
-                        // Assuming the URL is the identifier for deletion
-                        var fileUrl = item.getUrl();
-
-                        $.ajax({
-                            url: fileUrl,
-                            method: 'DELETE',
-                            success: function () {
-                                // Remove the item from the UploadSet
-                                oUploadSet.removeItem(item);
-                                resolve();
-                            },
-                            error: function (xhr, textStatus, errorThrown) {
-                                console.error("Error deleting file:", xhr.status, xhr.statusText, xhr.responseText);
-                                sap.m.MessageToast.show("Error deleting file: " + xhr.responseText);
-                                reject();
+                var aSelectedItems = oUploadSet.getSelectedItems();
+            
+                if (aSelectedItems && aSelectedItems.length > 0) {
+                    var oSelectedItem = aSelectedItems[0];
+                    var oContext = oSelectedItem.getBindingContext("MainModel");
+            
+                    if (oContext) {
+                        var sFileId = oContext.getProperty("FILE_ID");
+                        
+                        // Confirmation dialog before deletion
+                        MessageBox.confirm("Are you sure you want to delete this file?", {
+                            onClose: function (oAction) {
+                                if (oAction === "OK") {
+                                    // Call the backend service to delete the file
+                                    fetch(`/odata/v4/my/DMS_ATT(${sFileId})`, {
+                                        method: "DELETE"
+                                    })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            MessageToast.show("File deleted successfully.");
+                                            // Refresh the UploadSet to reflect the changes
+                                            oUploadSet.removeItem(oSelectedItem);
+                                        } else {
+                                            return response.text().then(text => {
+                                                throw new Error(text || response.statusText);
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        MessageBox.error(`Error deleting file: ${error.message}`);
+                                    });
+                                }
                             }
                         });
-                    });
-                });
-
-                Promise.all(deletePromises)
-                    .then(function () {
-                        sap.m.MessageToast.show("Selected items deleted successfully.");
-                        oUploadSet.getBinding("items").refresh(); // Refresh the binding if necessary
-                    })
-                    .catch(function (error) {
-                        console.error("Error deleting one or more items.", error);
-                    });
+                    } else {
+                        MessageToast.show("Failed to retrieve file context.");
+                    }
+                } else {
+                    MessageToast.show("Please select a file to delete.");
+                }
             },
-          
 
             // onOpenSelectedButton: function () {
             //     var oUploadSet = this.byId("uploadSet");
@@ -2070,6 +2072,50 @@ sap.ui.define([
             //         sap.m.MessageToast.show("No item selected.");
             //     }
             // }
+            // onOpenSelectedButton: function () {
+            //     var oUploadSet = this.byId("uploadSet");
+            //     var aSelectedItems = oUploadSet.getSelectedItems();
+            
+            //     if (aSelectedItems && aSelectedItems.length > 0) {
+            //         var oSelectedItem = aSelectedItems[0];
+            //         var oContext = oSelectedItem.getBindingContext("MainModel");
+            
+            //         if (oContext) {
+            //             var sFileId = oContext.getProperty("FILE_ID");
+            
+            //             // Construct the URL to fetch the file content
+            //             var imageUrl = "./odata/v4/my/DMS_ATT(" + sFileId + ")/FILE_CONTENT";
+            
+            //             // Fetch the image data
+            //             fetch(imageUrl, {
+            //                 method: "GET"
+            //             })
+            //             .then(response => {
+            //                 if (!response.ok) {
+            //                     throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
+            //                 }
+            //                 return response.blob();
+            //             })
+            //             .then(blob => {
+            //                 if (!blob || blob.size === 0) {
+            //                     throw new Error("Received empty blob");
+            //                 }
+            //                 var objectURL = URL.createObjectURL(blob);
+            //                 // Open the image in a new tab
+            //                 window.open(objectURL, '_blank');
+            //                 // sap.m.MessageToast.show("Selected File ID: " + sFileId);
+            //             })
+            //             .catch(error => {
+            //                 console.error('Fetch Error:', error);
+            //                 sap.m.MessageToast.show("An error occurred while fetching the file content. Please try again later.");
+            //             });
+            //         } else {
+            //             sap.m.MessageToast.show("No binding context found for the selected item.");
+            //         }
+            //     } else {
+            //         sap.m.MessageToast.show("No item selected.");
+            //     }
+            // },
             onOpenSelectedButton: function () {
                 var oUploadSet = this.byId("uploadSet");
                 var aSelectedItems = oUploadSet.getSelectedItems();
@@ -2082,26 +2128,40 @@ sap.ui.define([
                         var sFileId = oContext.getProperty("FILE_ID");
             
                         // Construct the URL to fetch the file content
-                        var imageUrl = "./odata/v4/my/DMS_ATT(" + sFileId + ")/FILE_CONTENT";
+                        var fileUrl = "./odata/v4/my/DMS_ATT(" + sFileId + ")/FILE_CONTENT";
             
-                        // Fetch the image data
-                        fetch(imageUrl, {
+                        // Fetch the file data
+                        fetch(fileUrl, {
                             method: "GET"
                         })
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error('Network response was not ok: ' + response.status + ' ' + response.statusText);
                             }
-                            return response.blob();
+                            var contentType = response.headers.get("Content-Type");
+                            return response.blob().then(blob => ({ blob, contentType }));
                         })
-                        .then(blob => {
+                        .then(({ blob, contentType }) => {
                             if (!blob || blob.size === 0) {
                                 throw new Error("Received empty blob");
                             }
                             var objectURL = URL.createObjectURL(blob);
-                            // Open the image in a new tab
-                            window.open(objectURL, '_blank');
-                            // sap.m.MessageToast.show("Selected File ID: " + sFileId);
+                            
+                            // Determine file type and open accordingly
+                            if (contentType.startsWith("image/")) {
+                                // Open image in a new tab
+                                window.open(objectURL, '_blank');
+                            } else if (contentType === "application/pdf") {
+                                // Open PDF in a new tab
+                                window.open(objectURL, '_blank');
+                            } else if (contentType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || 
+                                       contentType === "application/msword") {
+                                // Open Word document (it may depend on the browser's handling capabilities)
+                                window.open(objectURL, '_blank');
+                            } else {
+                                // Handle other file types
+                                sap.m.MessageToast.show("Unsupported file type: " + contentType);
+                            }
                         })
                         .catch(error => {
                             console.error('Fetch Error:', error);
@@ -2113,7 +2173,7 @@ sap.ui.define([
                 } else {
                     sap.m.MessageToast.show("No item selected.");
                 }
-            },
+            },            
             onDownloadSelectedButton: function () {
                 var oUploadSet = this.byId("uploadSet");
                 var aSelectedItems = oUploadSet.getSelectedItems();
